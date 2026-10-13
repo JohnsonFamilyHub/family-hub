@@ -6,17 +6,19 @@
 <title>Johnson Family Hub</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#f6f7fc;color:#243047}header{background:#fff;padding:20px 16px;text-align:center;box-shadow:0 2px 12px #1b315012}header h1{margin:0;font-size:26px}header p{margin:6px 0 0;color:#67738b}main{max-width:950px;margin:auto;padding:18px 14px 45px}.welcome{background:#fff;border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 4px 18px #1b31500a}.welcome h2{margin:0 0 6px;font-size:22px}.welcome p{margin:0;color:#627087}.kids{display:flex;gap:16px;align-items:stretch}.kid{width:50%;border-radius:20px;padding:20px;box-shadow:0 6px 20px #1b315015}.kid.blue{background:#e5f1ff}.kid.pink{background:#ffe6f1}.kid h2{margin:0 0 5px;font-size:25px}.kid .subtitle{margin:0 0 14px;color:#526078}.task{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;margin:9px 0;padding:12px;border:2px solid transparent;border-radius:15px;background:#fff;color:#243047;text-align:left;font-size:17px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}.task .picture{font-size:31px;width:40px;text-align:center;flex-shrink:0}.task .label{flex:1}.task .check{font-size:25px;color:#9aa7b8}.task.done{border-color:#4baf83;background:#f2fff8}.task.done .check{color:#258b60}.note{font-size:13px;color:#56657c;line-height:1.5;margin-top:12px}.parent{margin-top:20px;padding:20px;border-radius:18px;background:#fff;box-shadow:0 4px 18px #1b31500a}.parent h2{margin:0 0 8px}.parent p{color:#627087;line-height:1.5}.pill{display:inline-block;border-radius:100px;background:#eef0f5;padding:7px 12px;font-size:13px;font-weight:700;color:#5b6475}.footer{text-align:center;color:#798398;font-size:13px;margin-top:22px}@media(max-width:650px){.kids{display:block}.kid{width:100%;margin-bottom:16px}.task{min-height:72px}header h1{font-size:23px}}
+.authbar{max-width:950px;margin:12px auto 0;padding:0 14px;display:flex;justify-content:flex-end;align-items:center;gap:10px;flex-wrap:wrap}.authbar button,.parent button{border:0;border-radius:10px;background:#2457a7;color:white;padding:10px 14px;font-size:15px;cursor:pointer}.authbar button:disabled,.parent button:disabled{opacity:.5}.authbar span{font-size:13px;color:#536079}.parent input{font-size:16px;padding:10px;border:1px solid #b8c3d4;border-radius:8px;max-width:100%;width:65%}.parent ul{padding-left:22px}.parent li{padding:8px 0}.parent li button{margin-left:12px;background:#7e3957;padding:5px 9px}.status{font-size:14px;color:#536079}.hidden{display:none!important}
 </style>
 </head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1><p>Our family's happy place</p></header>
+<div class="authbar"><span id="auth-status">Parent sign-in not connected</span><button id="login" type="button">Parent Google sign-in</button><button id="logout" type="button" class="hidden">Sign out</button></div>
 <main>
 <section class="welcome"><h2>☀️ Today's Family Dashboard</h2><p id="today">Welcome home!</p></section>
 <div class="kids">
 <section class="kid blue"><h2>💙 Kieran</h2><p class="subtitle">Tap a chore when it's finished!</p><div id="kieran"></div><p class="note">Demo checklist only. Chores are not submitted for approval yet.</p></section>
 <section class="kid pink"><h2>💗 Evie</h2><p class="subtitle">Tap a chore when it's finished!</p><div id="evie"></div><p class="note">Demo checklist only. Chores are not submitted for approval yet.</p></section>
 </div>
-<section class="parent"><h2>🔒 Parent Area</h2><span class="pill">Coming in the next build</span><p>Mom and Josh will manage the shared calendar, groceries, household tasks, chore approvals, stars, allowance, and rewards here.</p><p><strong>Security:</strong> This preview does not unlock parent features or connect to Firebase. We'll add authenticated parent access and the five-minute PIN lock before enabling shared family data.</p></section>
+<section class="parent"><h2>🔒 Parent Area</h2><p id="parent-message">Sign in with an approved parent Google account to access shared family information.</p><div id="parent-content" class="hidden"><h3>🛒 Shared grocery list</h3><p>Add an item here, then check another parent's phone to confirm syncing.</p><form id="grocery-form"><input id="grocery-input" maxlength="100" placeholder="Add a grocery item" required><button type="submit">Add</button></form><ul id="grocery-list"></ul><p class="status" id="grocery-status"></p><h3>Coming next</h3><p>Chore approvals, stars, allowance, rewards, calendar and household tasks.</p></div><p class="note">The children's checklists above are still local demonstrations. They do not submit chores for approval. This app uses Google sign-in for parents; no PIN lock is implemented yet.</p></section>
 <div class="footer">Made for the Johnson family ❤️</div>
 </main>
 <script>
@@ -35,6 +37,32 @@ if(day===2||day===4||day===6||day===0){evie.push(['🍽️','Set the table']);}
 if(day===6){kieran.push(['🧺','Wash and put away laundry'],['🛏️','Change bedsheets']);evie.push(['🧺','Wash and put away laundry'],['🛏️','Change bedsheets']);}
 function render(id,tasks){var root=document.getElementById(id);tasks.forEach(function(t){var b=document.createElement('button');b.type='button';b.className='task';b.setAttribute('aria-pressed','false');var pic=document.createElement('span');pic.className='picture';pic.textContent=t[0];var label=document.createElement('span');label.className='label';label.textContent=t[1];var check=document.createElement('span');check.className='check';check.textContent='○';b.appendChild(pic);b.appendChild(label);b.appendChild(check);b.onclick=function(){var isDone=b.classList.toggle('done');check.textContent=isDone?'✓':'○';b.setAttribute('aria-pressed',isDone?'true':'false');};root.appendChild(b);});}
 render('kieran',kieran);render('evie',evie);
+})();
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+'use strict';
+var cfg={apiKey:'AIzaSyBvFIGnolDSLfX377Qa-Jwu3mVlgLUJY0w',authDomain:'johnson-family-hub-84cbd.firebaseapp.com',projectId:'johnson-family-hub-84cbd',appId:'1:711408343414:web:3360f3f5da9458ad6d4257'};
+var parents=['veronicalillianjohnson@gmail.com','joshcooperjohnson@gmail.com'];
+var status=document.getElementById('auth-status'),msg=document.getElementById('parent-message'),area=document.getElementById('parent-content'),login=document.getElementById('login'),logout=document.getElementById('logout'),list=document.getElementById('grocery-list'),info=document.getElementById('grocery-status');
+if(!window.firebase){status.textContent='Firebase could not load. Check your internet connection.';login.disabled=true;return;}
+firebase.initializeApp(cfg);
+var auth=firebase.auth(),db=firebase.firestore(),provider=new firebase.auth.GoogleAuthProvider(),unsubscribe=null;
+function errorText(err){return (err&&err.message)?err.message:'An unexpected error occurred.';}
+login.onclick=function(){status.textContent='Opening Google sign-in…';auth.signInWithPopup(provider).catch(function(err){if(err.code==='auth/popup-blocked'||err.code==='auth/operation-not-supported-in-this-environment'){auth.signInWithRedirect(provider).catch(function(e){status.textContent=errorText(e);});}else{status.textContent=errorText(err);}});};
+logout.onclick=function(){auth.signOut().catch(function(e){status.textContent=errorText(e);});};
+function clearList(){while(list.firstChild)list.removeChild(list.firstChild);}
+auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}clearList();area.classList.add('hidden');info.textContent='';if(!user){status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');return;}
+login.classList.add('hidden');logout.classList.remove('hidden');status.textContent='Signed in: '+(user.email||'Google account');
+if(!user.emailVerified||parents.indexOf((user.email||'').toLowerCase())===-1){msg.textContent='This Google account is not authorized as a parent. Sign out and use an approved account.';return;}
+msg.textContent='Welcome! Both parents can view and update this grocery list.';area.classList.remove('hidden');
+unsubscribe=db.collection('family').doc('johnson').collection('groceries').orderBy('createdAt','asc').onSnapshot(function(snapshot){clearList();snapshot.forEach(function(doc){var data=doc.data(),li=document.createElement('li'),label=document.createElement('span'),remove=document.createElement('button');label.textContent=String(data.name||'');remove.textContent='Remove';remove.type='button';remove.onclick=function(){db.collection('family').doc('johnson').collection('groceries').doc(doc.id).delete().catch(function(e){info.textContent=errorText(e);});};li.appendChild(label);li.appendChild(remove);list.appendChild(li);});info.textContent=snapshot.empty?'No grocery items yet.':'Shared list updated.';},function(err){info.textContent='Cannot load shared groceries: '+errorText(err)+' Check that Firestore rules are published.';});
+});
+auth.getRedirectResult().catch(function(err){status.textContent=errorText(err);});
+document.getElementById('grocery-form').onsubmit=function(event){event.preventDefault();var field=document.getElementById('grocery-input'),name=field.value.trim();if(!name)return;info.textContent='Saving…';db.collection('family').doc('johnson').collection('groceries').add({name:name,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){field.value='';}).catch(function(err){info.textContent='Could not save: '+errorText(err);});};
 })();
 </script>
 </body>
