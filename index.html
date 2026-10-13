@@ -20,12 +20,12 @@
 <div class="authbar"><span id="auth-status">Parent sign-in not connected</span><button id="login" type="button">Parent Google sign-in</button><button id="logout" type="button" class="hidden">Sign out</button></div>
 <main>
 <section class="welcome"><h2>☀️ Today's Family Dashboard</h2><p id="today">Welcome home!</p></section>
-<p class="preview-label"><strong>Chore approval pilot:</strong> The registered homebase iPad can send completed chores for parent review. Approvals do not award money or stars yet. Paid chore schedules are still drafts.</p><p id="device-status" class="status">Checking homebase access…</p>
-<section id="kid-picker" class="kid-picker"><h2>Whose dashboard?</h2><p>Tap your name to see today's chores and rewards.</p><div class="picker-buttons"><button type="button" class="picker blue" data-kid="kieran"><span class="profile-icon hat" aria-hidden="true"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M12 40c2-5 8-8 17-8h9c8 0 13 4 15 8l-4 7H16z" fill="#b8793d" stroke="#70431f" stroke-width="3" stroke-linejoin="round"/><path d="M24 32 27 13q1-5 6-5t6 5l3 19" fill="#d99a55" stroke="#70431f" stroke-width="3" stroke-linejoin="round"/><path d="M25 22h15l1 7H24z" fill="#4d79ad"/><path d="M6 47q26 8 52 0" fill="none" stroke="#70431f" stroke-width="4" stroke-linecap="round"/></svg></span><span>Kieran</span><small>My chores & rewards</small></button><button type="button" class="picker pink" data-kid="evie"><span class="profile-icon ballet" aria-hidden="true"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M14 39c4-9 12-15 20-14 5 1 7 6 5 10l-5 7c-2 3 0 5 4 4l11-4c5-2 8 2 5 6-4 6-16 9-28 7-10-1-16-7-12-16z" fill="#f6a9c8" stroke="#b94e7c" stroke-width="3" stroke-linejoin="round"/><path d="M31 27 26 14M35 28 42 13M26 14l-8-4M42 13l8-5" fill="none" stroke="#b94e7c" stroke-width="3" stroke-linecap="round"/><path d="M18 46q12 5 24 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></span><span>Evie</span><small>My chores & rewards</small></button></div></section><div id="dashboard-navigation" class="hidden"><button type="button" id="back-home">← Back to Home</button></div><div class="kids hidden" id="kid-dashboards">
-<section class="kid blue hidden" id="kieran-panel"><h2><span class="profile-icon hat" aria-hidden="true"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M12 40c2-5 8-8 17-8h9c8 0 13 4 15 8l-4 7H16z" fill="#b8793d" stroke="#70431f" stroke-width="3" stroke-linejoin="round"/><path d="M24 32 27 13q1-5 6-5t6 5l3 19" fill="#d99a55" stroke="#70431f" stroke-width="3" stroke-linejoin="round"/><path d="M25 22h15l1 7H24z" fill="#4d79ad"/><path d="M6 47q26 8 52 0" fill="none" stroke="#70431f" stroke-width="4" stroke-linecap="round"/></svg></span> Kieran</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat">⭐ Stars: —</span><span class="stat">💵 This week: — / $15</span></div><div id="kieran"></div></section>
-<section class="kid pink hidden" id="evie-panel"><h2><span class="profile-icon ballet" aria-hidden="true"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M14 39c4-9 12-15 20-14 5 1 7 6 5 10l-5 7c-2 3 0 5 4 4l11-4c5-2 8 2 5 6-4 6-16 9-28 7-10-1-16-7-12-16z" fill="#f6a9c8" stroke="#b94e7c" stroke-width="3" stroke-linejoin="round"/><path d="M31 27 26 14M35 28 42 13M26 14l-8-4M42 13l8-5" fill="none" stroke="#b94e7c" stroke-width="3" stroke-linecap="round"/><path d="M18 46q12 5 24 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat">⭐ Stars: —</span><span class="stat">💵 This week: — / $15</span></div><div id="evie"></div></section>
+<p class="preview-label"><strong>Chore approval pilot:</strong> The registered homebase iPad can send completed chores for parent review. Approvals do not award money or stars yet. Paid chore schedules have been finalized; approvals do not award money yet.</p><p id="device-status" class="status">Checking homebase access…</p>
+<section id="kid-picker" class="kid-picker"><h2>Whose dashboard?</h2><p>Tap your name to see today's chores and rewards.</p><div class="picker-buttons"><button type="button" class="picker blue" data-kid="kieran"><span class="profile-emoji" aria-hidden="true">⭐</span><span>Kieran</span><small>My chores & rewards</small></button><button type="button" class="picker pink" data-kid="evie"><span class="profile-emoji" aria-hidden="true">🎀</span><span>Evie</span><small>My chores & rewards</small></button></div></section><div id="dashboard-navigation" class="hidden"><button type="button" id="back-home">← Back to Home</button></div><div class="kids hidden" id="kid-dashboards">
+<section class="kid blue hidden" id="kieran-panel"><h2><span class="profile-emoji" aria-hidden="true">⭐</span> Kieran</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat">⭐ Stars: —</span><span class="stat">💵 This week: — / $15</span></div><div id="kieran"></div></section>
+<section class="kid pink hidden" id="evie-panel"><h2><span class="profile-emoji" aria-hidden="true">🎀</span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat">⭐ Stars: —</span><span class="stat">💵 This week: — / $15</span></div><div id="evie"></div></section>
 </div>
-<section class="parent"><h2>🔒 Parent Area</h2><p id="parent-message">Sign in with an approved parent Google account to access shared family information.</p><div id="parent-content" class="hidden"><h3>🛒 Shared grocery list</h3><p>Add an item here, then check another parent's phone to confirm syncing.</p><form id="grocery-form"><input id="grocery-input" maxlength="100" placeholder="Add a grocery item" required><button type="submit">Add</button></form><ul id="grocery-list"></ul><p class="status" id="grocery-status"></p><h3>📝 Chore approvals</h3><p class="status" id="approval-status">Loading…</p><div id="approval-list"></div><h3>Coming next</h3><p>Secure homebase registration, parent approvals, stars, allowance, rewards, calendar and household tasks.</p></div><p class="note">Chore approval pilot only: approving does not award money or stars. Paid chore schedules remain drafts. No PIN lock is implemented yet.</p></section>
+<section class="parent"><h2>🔒 Parent Area</h2><p id="parent-message">Sign in with an approved parent Google account to access shared family information.</p><div id="parent-content" class="hidden"><h3>🛒 Shared grocery list</h3><p>Add an item here, then check another parent's phone to confirm syncing.</p><form id="grocery-form"><input id="grocery-input" maxlength="100" placeholder="Add a grocery item" required><button type="submit">Add</button></form><ul id="grocery-list"></ul><p class="status" id="grocery-status"></p><h3>📝 Chore approvals</h3><p class="status" id="approval-status">Loading…</p><div id="approval-list"></div><h3>Coming next</h3><p>Automatic stars, allowance balances, rewards, calendar and household tasks.</p></div><p class="note">Chore approval pilot only: approving does not award money or stars. Paid chore schedules are finalized; earnings tracking is not enabled yet. No PIN lock is implemented yet.</p></section>
 <div class="footer">Made for the Johnson family ❤️</div>
 </main>
 <script>
@@ -61,66 +61,57 @@ if(day===2||day===4)add('evie','Workbook with Mom','📖',['Complete workbook ti
 if(day===3)add('evie','Bring in the milk','🥛',['Bring milk inside from the milkbox']);
 if(day===0||day===1||day===3||day===5)add('evie','Keekee’s water','💧',['Refill Keekee’s water']);
 var paid={kieran:[],evie:[]};
-function pay(k,icon,title){paid[k].push({icon:icon,title:title});}
-// Provisional weekly schedule; parent review required before enabling real payouts.
-for(var d=0;d<7;d++){} // Day-specific opportunities below.
-pay('kieran','🐈‍⬛','Feed Keekee (wet food)');
-if(day>=1&&day<=5)pay('kieran','🍽️','Empty dishwasher (if ready)');
-if(day===1||day===4)pay('kieran','🥕','Help prepare dinner');
-if(day===2)pay('kieran','🗑️','Take trash bins to curb');
-if(day===4)pay('kieran','🗑️','Bring trash bins back in');
-if(day===6){pay('kieran','🧺','Wash and put away own laundry');pay('kieran','🛏️','Change own bedsheets');}
-if(day===0)pay('kieran','🧽','Help with weekend household cleaning');
-if(day===1||day===3)pay('kieran','🤝','Help Mom or Dad with an assigned task');
-// Evie's paid chores are a draft until the family approves the exact weekly schedule.
-if(day>=1&&day<=5)pay('evie','🍴','Help unload dishwasher (silverware, if ready)');
-if(day===1||day===4)pay('evie','🥕','Help prepare food');
-if(day===2||day===5)pay('evie','🐕','Feed Ozzy and Dolly (with parent guidance)');
-if(day===0)pay('evie','🧽','Help with weekend household cleaning');
-if(day===6){pay('evie','🧺','Wash and put away own laundry');pay('evie','🛏️','Change own bedsheets');pay('evie','🌱','Water plants (if needed)');}
-if(day===3||day===0)pay('evie','🤝','Help Mom or Dad with an assigned task');
+function pay(k,icon,title,key){paid[k].push({icon:icon,title:title,key:key});}
+// Finalized schedules: 20 distinct weekly opportunities for each child.
+// Kieran: 7 + 3 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 = 20.
+pay('kieran','💰','Feed Keekee (wet food)','feed_keekee');
+if(day===2||day===4||day===5)pay('kieran','🍽️','Unload dishwasher','dishwasher');
+if(day===2||day===5)pay('kieran','🗑️','Empty household garbage pails and replace bags','small_trash');
+if(day===1||day===3)pay('kieran','🤝','Help Mom or Dad with an assigned task','parent_help');
+if(day===3)pay('kieran','🗑️','Take trash bins to curb','trash_out');
+if(day===4)pay('kieran','🗑️','Bring trash bins back in','trash_in');
+if(day===6){
+ pay('kieran','🧺','Wash and put away own laundry','laundry');
+ pay('kieran','🛏️','Change own bedsheets','bedsheets');
+ pay('kieran','🧽','Wash and replace four first-floor rugs','rugs');
+}
+if(day===0)pay('kieran','🐈','Clean Keekee’s litter box','litter');
+// Evie: 7 + 7 + 4 + 1 + 1 = 20. Feeding both dogs morning and evening
+// counts as ONE opportunity, not two. No scheduled plant watering.
+pay('evie','🍴','Put away clean silverware','silverware');
+pay('evie','🐕','Feed Ozzy & Dolly (morning and evening)','feed_dogs');
+if(day===2||day===4||day===6||day===0)pay('evie','🍽️','Set the dinner table','set_table');
+if(day===6){
+ pay('evie','🧺','Wash and put away own laundry','laundry');
+ pay('evie','🛏️','Help change own bedsheets','bedsheets');
+}
+// Older iPad (iOS 12): use familiar emoji and plain text, not custom SVG artwork.
 function picture(t){
- var x=t.toLowerCase(),kind='star',bg='#e9edff';
- if(x.indexOf('teeth')>=0){kind='toothbrush';bg='#dff5ff';}
- else if(x.indexOf('wake')>=0){kind='clock';bg='#fff0c7';}
- else if(x.indexOf('uniform')>=0||x.indexOf('dressed')>=0||x.indexOf('clothes')>=0){kind='shirt';bg='#e4efff';}
- else if(x.indexOf('water bottle')>=0||x.indexOf('water')>=0){kind='bottle';bg='#dff5ff';}
- else if(x.indexOf('leave')>=0||x.indexOf('school')>=0){kind='backpack';bg='#ffe4b8';}
- else if(x.indexOf('shower')>=0){kind='shower';bg='#dff5ff';}
- else if(x.indexOf('hamper')>=0||x.indexOf('laundry')>=0){kind='basket';bg='#f4e5ff';}
- else if(x.indexOf('toy')>=0||x.indexOf('belonging')>=0){kind='bear';bg='#ffe8d5';}
- else if(x.indexOf('keekee')>=0||x.indexOf('cat')>=0){kind='cat';bg='#e8e5ff';}
- else if(x.indexOf('bathroom')>=0||x.indexOf('litter')>=0){kind='box';bg='#e8e5ff';}
- else if(x.indexOf('bed')>=0){kind='bed';bg='#e5efff';}
- else if(x.indexOf('chicken')>=0||x.indexOf('feed bucket')>=0){kind='chicken';bg='#fff0c7';}
- else if(x.indexOf('workbook')>=0||x.indexOf('book')>=0){kind='book';bg='#e4f5df';}
- else if(x.indexOf('milk')>=0){kind='milk';bg='#e4f5ff';}
- else if(x.indexOf('ozzy')>=0||x.indexOf('dolly')>=0||x.indexOf('dog')>=0){kind='dog';bg='#ffe7d7';}
- else if(x.indexOf('dishwasher')>=0||x.indexOf('dishes')>=0){kind='plate';bg='#dff5ff';}
- else if(x.indexOf('trash')>=0||x.indexOf('bins')>=0){kind='bin';bg='#e8edf2';}
- else if(x.indexOf('table')>=0||x.indexOf('food')>=0||x.indexOf('dinner')>=0){kind='plate';bg='#fff0d7';}
- var paths={
- toothbrush:'<path d="M22 29 L39 53" stroke="#ff8d78" stroke-width="8" stroke-linecap="round"/><rect x="17" y="10" width="17" height="22" rx="4" fill="#55b7e8" stroke="#2457a7" stroke-width="2"/><path d="M20 12v-5m5 5V7m5 5V7" stroke="#2457a7" stroke-width="2" stroke-linecap="round"/>',
- clock:'<circle cx="26" cy="28" r="18" fill="#fff" stroke="#e7a52c" stroke-width="4"/><path d="M26 17v12l8 5" fill="none" stroke="#536079" stroke-width="3" stroke-linecap="round"/>',
- shirt:'<path d="M16 15 25 10h8l9 5 8 8-8 7-5-5v28H19V25l-5 5-8-7z" fill="#6ba4ed" stroke="#356bb3" stroke-width="2" stroke-linejoin="round"/>',
- bottle:'<rect x="22" y="10" width="13" height="7" rx="2" fill="#438fc7"/><rect x="17" y="17" width="23" height="40" rx="7" fill="#fff" stroke="#438fc7" stroke-width="3"/><path d="M20 39h17" stroke="#78c9ed" stroke-width="7"/>',
- backpack:'<rect x="15" y="17" width="30" height="39" rx="8" fill="#f2a83b" stroke="#a86a1b" stroke-width="3"/><path d="M22 17v-4q8-8 16 0v4M15 31h30M23 31v10h14V31" fill="none" stroke="#a86a1b" stroke-width="3"/>',
- shower:'<path d="M12 27V19q0-11 12-11t12 11v4" fill="none" stroke="#438fc7" stroke-width="4" stroke-linecap="round"/><path d="M31 22h14l-3 7H30" fill="#78c9ed" stroke="#438fc7" stroke-width="2"/><path d="M34 34l-2 5m9-5-2 5m-13 1-2 5" stroke="#438fc7" stroke-width="3" stroke-linecap="round"/>',
- basket:'<path d="M12 26h36l-4 29H16z" fill="#c69be8" stroke="#8c62b1" stroke-width="3"/><path d="M20 26q8-25 20 0" fill="none" stroke="#8c62b1" stroke-width="3"/><path d="M22 31v18m9-18v18m9-18v18" stroke="#fff" stroke-width="2"/>',
- bear:'<circle cx="17" cy="17" r="8" fill="#c98d58"/><circle cx="43" cy="17" r="8" fill="#c98d58"/><circle cx="30" cy="32" r="20" fill="#e9b77e"/><circle cx="23" cy="29" r="2.5" fill="#513b2b"/><circle cx="37" cy="29" r="2.5" fill="#513b2b"/><ellipse cx="30" cy="37" rx="7" ry="5" fill="#fff0d8"/><circle cx="30" cy="35" r="2" fill="#513b2b"/>',
- cat:'<path d="M12 25 10 8l14 8q7-3 14 0l14-8-2 18q4 20-19 25Q8 45 12 25" fill="#292d38" stroke="#555b6b" stroke-width="2"/><path d="M18 36l-8 1m8 3-7 3m33-7 8 1m-8 3 7 3" stroke="#555b6b" stroke-width="2" stroke-linecap="round"/><circle cx="23" cy="29" r="4" fill="#7ce1a5"/><circle cx="37" cy="29" r="4" fill="#7ce1a5"/><circle cx="23" cy="29" r="1.5" fill="#222"/><circle cx="37" cy="29" r="1.5" fill="#222"/><path d="M27 37l3 3 3-3M30 40v4" stroke="#fff" stroke-width="2" fill="none"/>',
- box:'<path d="M10 20 30 9l20 11v27L30 58 10 47z" fill="#c4b4a0" stroke="#8c7965" stroke-width="3"/><path d="M10 20l20 12 20-12M30 32v26" fill="none" stroke="#8c7965" stroke-width="3"/>',
- bed:'<path d="M10 39V18m0 21h40V28q0-5-6-5H23q-6 0-6 5v11" fill="none" stroke="#5485c4" stroke-width="4"/><rect x="17" y="26" width="14" height="9" rx="3" fill="#ffb8d4"/><path d="M10 39v13m40-13v13" stroke="#5485c4" stroke-width="4"/>',
- chicken:'<ellipse cx="28" cy="35" rx="17" ry="14" fill="#fff" stroke="#d49a31" stroke-width="3"/><circle cx="42" cy="22" r="9" fill="#fff" stroke="#d49a31" stroke-width="3"/><path d="M38 12q-5-7 0-8 6 0 6 6 5-7 8-2l-3 8" fill="#ed7c66"/><path d="M50 22l9 4-9 4" fill="#edb13b"/><circle cx="44" cy="20" r="2" fill="#333"/>',
- book:'<path d="M10 15q12-6 20 3 8-9 20-3v34q-12-5-20 3-8-8-20-3z" fill="#8ecb7e" stroke="#448c4b" stroke-width="3"/><path d="M30 18v34" stroke="#448c4b" stroke-width="2"/>',
- milk:'<path d="M20 15l5-7h12l5 7v40H20z" fill="#fff" stroke="#6ba4d8" stroke-width="3"/><path d="M25 8v7h17" fill="none" stroke="#6ba4d8" stroke-width="3"/><path d="M22 34h19" stroke="#8bd0f2" stroke-width="8"/>',
- dog:'<path d="M13 24 8 12q-2-6 5-4l13 12q5-2 10 0L49 9q7-2 5 5l-5 15q5 20-18 24Q10 49 13 24" fill="#b98258" stroke="#855b3c" stroke-width="2"/><circle cx="23" cy="29" r="2.5" fill="#302b2a"/><circle cx="38" cy="29" r="2.5" fill="#302b2a"/><ellipse cx="30" cy="37" rx="6" ry="4" fill="#302b2a"/>',
- plate:'<circle cx="30" cy="32" r="22" fill="#fff" stroke="#68a9d3" stroke-width="4"/><circle cx="30" cy="32" r="13" fill="#dff5ff" stroke="#68a9d3" stroke-width="2"/>',
- bin:'<path d="M16 18h28l-3 38H19z" fill="#9ca9b8" stroke="#596a7b" stroke-width="3"/><path d="M12 18h36M23 12h14" stroke="#596a7b" stroke-width="4" stroke-linecap="round"/>',
- ballet:'<path d="M13 40c4-9 12-15 20-14 5 1 7 6 5 10l-5 7c-2 3 0 5 4 4l11-4c5-2 8 2 5 6-4 6-16 9-28 7-10-1-16-7-12-16z" fill="#f6a9c8" stroke="#b94e7c" stroke-width="3" stroke-linejoin="round"/><path d="M31 27 26 14M35 28 42 13M26 14l-8-4M42 13l8-5" fill="none" stroke="#b94e7c" stroke-width="3" stroke-linecap="round"/>',
- star:'<path d="m30 7 7 15 16 2-12 11 3 17-14-8-14 8 3-17L7 24l16-2z" fill="#f3c54f" stroke="#c99922" stroke-width="2"/>'
- };
- return '<span class="pictogram" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;border-radius:12px;background:'+bg+'"><svg width="38" height="38" viewBox="0 0 60 64" xmlns="http://www.w3.org/2000/svg">'+paths[kind]+'</svg></span>';
+ var x=t.toLowerCase(),symbol='⭐';
+ if(x.indexOf('feed keekee (wet')>=0)symbol='$';
+ else if(x.indexOf('silverware')>=0)symbol='🍴';
+ else if(x.indexOf('water')>=0)symbol='💧';
+ else if(x.indexOf('teeth')>=0)symbol='😁';
+ else if(x.indexOf('wake')>=0)symbol='⏰';
+ else if(x.indexOf('hamper')>=0)symbol='🧺';
+ else if(x.indexOf('comfortable clothes')>=0)symbol='👖';
+ else if(x.indexOf('uniform')>=0||x.indexOf('dressed')>=0)symbol='👕';
+ else if(x.indexOf('shower')>=0)symbol='🚿';
+ else if(x.indexOf('bathroom')>=0)symbol='🚽';
+ else if(x.indexOf('leave')>=0)symbol='🎒';
+ else if(x.indexOf('laundry')>=0)symbol='🧺';
+ else if(x.indexOf('bedsheet')>=0||x.indexOf('bed on time')>=0)symbol='🛏';
+ else if(x.indexOf('ozzy')>=0||x.indexOf('dolly')>=0)symbol='🐕';
+ else if(x.indexOf('keekee')>=0||x.indexOf('litter')>=0)symbol='🐈';
+ else if(x.indexOf('garbage')>=0||x.indexOf('trash')>=0||x.indexOf('bins')>=0)symbol='🗑';
+ else if(x.indexOf('dishwasher')>=0||x.indexOf('dinner')>=0||x.indexOf('table')>=0)symbol='🍽';
+ else if(x.indexOf('rugs')>=0)symbol='🧽';
+ else if(x.indexOf('milk')>=0)symbol='🥛';
+ else if(x.indexOf('chicken')>=0)symbol='🐔';
+ else if(x.indexOf('workbook')>=0)symbol='📖';
+ else if(x.indexOf('help mom')>=0)symbol='🤝';
+ else if(x.indexOf('toys')>=0)symbol='🧸';
+ return '<span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;font-size:29px">'+symbol+'</span>';
 }
 function render(id){
  var root=document.getElementById(id);
@@ -146,8 +137,8 @@ function render(id){
   root.appendChild(section);
  });
  var paidSection=document.createElement('section');paidSection.className='paid-section';
- var paidTitle=document.createElement('h3');paidTitle.textContent='Paid chores · $0.75 each';paidSection.appendChild(paidTitle);
- var paidNote=document.createElement('p');paidNote.className='note';paidNote.textContent='Separate from stars. Each chore requires parent approval before earning $0.75. Up to 20 paid opportunities ($15) per week. This schedule is a draft.';paidSection.appendChild(paidNote);
+ var paidTitle=document.createElement('h3');paidTitle.textContent='Paid chores · $0.75 each · 20 per week';paidSection.appendChild(paidTitle);
+ var paidNote=document.createElement('p');paidNote.className='note';paidNote.textContent='Separate from stars. Each chore requires parent approval before earning $0.75. Up to 20 paid opportunities ($15) per week. This is the finalized weekly schedule.';paidSection.appendChild(paidNote);
  paid[id].forEach(function(chore,i){
   var b=document.createElement('button');b.type='button';b.className='paid-item';b.setAttribute('aria-pressed','false');
   var icon=document.createElement('span');icon.className='picture';icon.innerHTML=picture(chore.title);
@@ -158,7 +149,7 @@ function render(id){
   b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';b.setAttribute('aria-pressed',done?'true':'false');};
   paidSection.appendChild(b);
   var send=document.createElement('button');send.type='button';send.className='submit-paid';send.textContent='Submit chore for approval';send.disabled=true;
-  var requestId=id+'_'+isoDate+'_paid_'+i;
+  var requestId=id+'_'+isoDate+'_paid_'+chore.key;
   function refresh(){send.disabled=!b.classList.contains('done')||!window.hubCanSubmit||!!window.hubRequestStatus[requestId];}
   b.addEventListener('click',refresh);
   send.onclick=function(){window.hubSubmit(requestId,id,chore.title,send);};
