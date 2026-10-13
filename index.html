@@ -79,22 +79,46 @@ if(day===0)pay('evie','🧽','Help with weekend household cleaning');
 if(day===6){pay('evie','🧺','Wash and put away own laundry');pay('evie','🛏️','Change own bedsheets');pay('evie','🌱','Water plants (if needed)');}
 if(day===3||day===0)pay('evie','🤝','Help Mom or Dad with an assigned task');
 function picture(t){
- var x=t.toLowerCase();
- if(x.indexOf('teeth')>=0)return '🪥';
- if(x.indexOf('wake')>=0)return '⏰';
- if(x.indexOf('uniform')>=0||x.indexOf('dressed')>=0||x.indexOf('clothes')>=0)return '👕';
- if(x.indexOf('water bottle')>=0)return '🚰';
- if(x.indexOf('leave')>=0)return '🎒';
- if(x.indexOf('shower')>=0)return '🚿';
- if(x.indexOf('hamper')>=0)return '🧺';
- if(x.indexOf('toy')>=0||x.indexOf('belonging')>=0)return '🧸';
- if(x.indexOf('keekee')>=0)return '🐈‍⬛';
- if(x.indexOf('bathroom')>=0)return '🚽';
- if(x.indexOf('bed')>=0)return '🛏️';
- if(x.indexOf('chicken')>=0||x.indexOf('feed bucket')>=0)return '🐔';
- if(x.indexOf('workbook')>=0)return '📖';
- if(x.indexOf('milk')>=0)return '🥛';
- return '⭐';
+ var x=t.toLowerCase(),kind='star',bg='#e9edff';
+ if(x.indexOf('teeth')>=0){kind='toothbrush';bg='#dff5ff';}
+ else if(x.indexOf('wake')>=0){kind='clock';bg='#fff0c7';}
+ else if(x.indexOf('uniform')>=0||x.indexOf('dressed')>=0||x.indexOf('clothes')>=0){kind='shirt';bg='#e4efff';}
+ else if(x.indexOf('water bottle')>=0||x.indexOf('water')>=0){kind='bottle';bg='#dff5ff';}
+ else if(x.indexOf('leave')>=0||x.indexOf('school')>=0){kind='backpack';bg='#ffe4b8';}
+ else if(x.indexOf('shower')>=0){kind='shower';bg='#dff5ff';}
+ else if(x.indexOf('hamper')>=0||x.indexOf('laundry')>=0){kind='basket';bg='#f4e5ff';}
+ else if(x.indexOf('toy')>=0||x.indexOf('belonging')>=0){kind='bear';bg='#ffe8d5';}
+ else if(x.indexOf('keekee')>=0||x.indexOf('cat')>=0){kind='cat';bg='#e8e5ff';}
+ else if(x.indexOf('bathroom')>=0||x.indexOf('litter')>=0){kind='box';bg='#e8e5ff';}
+ else if(x.indexOf('bed')>=0){kind='bed';bg='#e5efff';}
+ else if(x.indexOf('chicken')>=0||x.indexOf('feed bucket')>=0){kind='chicken';bg='#fff0c7';}
+ else if(x.indexOf('workbook')>=0||x.indexOf('book')>=0){kind='book';bg='#e4f5df';}
+ else if(x.indexOf('milk')>=0){kind='milk';bg='#e4f5ff';}
+ else if(x.indexOf('ozzy')>=0||x.indexOf('dolly')>=0||x.indexOf('dog')>=0){kind='dog';bg='#ffe7d7';}
+ else if(x.indexOf('dishwasher')>=0||x.indexOf('dishes')>=0){kind='plate';bg='#dff5ff';}
+ else if(x.indexOf('trash')>=0||x.indexOf('bins')>=0){kind='bin';bg='#e8edf2';}
+ else if(x.indexOf('table')>=0||x.indexOf('food')>=0||x.indexOf('dinner')>=0){kind='plate';bg='#fff0d7';}
+ var paths={
+ toothbrush:'<rect x="21" y="25" width="8" height="37" rx="4" fill="#ff8d78" transform="rotate(24 25 43)"/><rect x="19" y="13" width="17" height="17" rx="3" fill="#55b7e8" transform="rotate(24 27 21)"/><path d="M22 14v-5m5 6V9m5 8 2-4" stroke="#2457a7" stroke-width="2" stroke-linecap="round"/>',
+ clock:'<circle cx="26" cy="28" r="18" fill="#fff" stroke="#e7a52c" stroke-width="4"/><path d="M26 17v12l8 5" fill="none" stroke="#536079" stroke-width="3" stroke-linecap="round"/>',
+ shirt:'<path d="M16 15 25 10h8l9 5 8 8-8 7-5-5v28H19V25l-5 5-8-7z" fill="#6ba4ed" stroke="#356bb3" stroke-width="2" stroke-linejoin="round"/>',
+ bottle:'<rect x="22" y="10" width="13" height="7" rx="2" fill="#438fc7"/><rect x="17" y="17" width="23" height="40" rx="7" fill="#fff" stroke="#438fc7" stroke-width="3"/><path d="M20 39h17" stroke="#78c9ed" stroke-width="7"/>',
+ backpack:'<rect x="15" y="17" width="30" height="39" rx="8" fill="#f2a83b" stroke="#a86a1b" stroke-width="3"/><path d="M22 17v-4q8-8 16 0v4M15 31h30M23 31v10h14V31" fill="none" stroke="#a86a1b" stroke-width="3"/>',
+ shower:'<path d="M12 27V19q0-11 12-11t12 11v4" fill="none" stroke="#438fc7" stroke-width="4" stroke-linecap="round"/><path d="M31 22h14l-3 7H30" fill="#78c9ed" stroke="#438fc7" stroke-width="2"/><path d="M34 34l-2 5m9-5-2 5m-13 1-2 5" stroke="#438fc7" stroke-width="3" stroke-linecap="round"/>',
+ basket:'<path d="M12 26h36l-4 29H16z" fill="#c69be8" stroke="#8c62b1" stroke-width="3"/><path d="M20 26q8-25 20 0" fill="none" stroke="#8c62b1" stroke-width="3"/><path d="M22 31v18m9-18v18m9-18v18" stroke="#fff" stroke-width="2"/>',
+ bear:'<circle cx="17" cy="17" r="8" fill="#c98d58"/><circle cx="43" cy="17" r="8" fill="#c98d58"/><circle cx="30" cy="32" r="20" fill="#e9b77e"/><circle cx="23" cy="29" r="2.5" fill="#513b2b"/><circle cx="37" cy="29" r="2.5" fill="#513b2b"/><ellipse cx="30" cy="37" rx="7" ry="5" fill="#fff0d8"/><circle cx="30" cy="35" r="2" fill="#513b2b"/>',
+ cat:'<path d="M12 25 10 8l14 8q7-3 14 0l14-8-2 18q4 20-19 25Q8 45 12 25" fill="#333746"/><circle cx="23" cy="29" r="3" fill="#7ce1a5"/><circle cx="37" cy="29" r="3" fill="#7ce1a5"/><path d="M27 37l3 3 3-3M30 40v4" stroke="#fff" stroke-width="2" fill="none"/>',
+ box:'<path d="M10 20 30 9l20 11v27L30 58 10 47z" fill="#c4b4a0" stroke="#8c7965" stroke-width="3"/><path d="M10 20l20 12 20-12M30 32v26" fill="none" stroke="#8c7965" stroke-width="3"/>',
+ bed:'<path d="M10 39V18m0 21h40V28q0-5-6-5H23q-6 0-6 5v11" fill="none" stroke="#5485c4" stroke-width="4"/><rect x="17" y="26" width="14" height="9" rx="3" fill="#ffb8d4"/><path d="M10 39v13m40-13v13" stroke="#5485c4" stroke-width="4"/>',
+ chicken:'<ellipse cx="28" cy="35" rx="17" ry="14" fill="#fff" stroke="#d49a31" stroke-width="3"/><circle cx="42" cy="22" r="9" fill="#fff" stroke="#d49a31" stroke-width="3"/><path d="M38 12q-5-7 0-8 6 0 6 6 5-7 8-2l-3 8" fill="#ed7c66"/><path d="M50 22l9 4-9 4" fill="#edb13b"/><circle cx="44" cy="20" r="2" fill="#333"/>',
+ book:'<path d="M10 15q12-6 20 3 8-9 20-3v34q-12-5-20 3-8-8-20-3z" fill="#8ecb7e" stroke="#448c4b" stroke-width="3"/><path d="M30 18v34" stroke="#448c4b" stroke-width="2"/>',
+ milk:'<path d="M20 15l5-7h12l5 7v40H20z" fill="#fff" stroke="#6ba4d8" stroke-width="3"/><path d="M25 8v7h17" fill="none" stroke="#6ba4d8" stroke-width="3"/><path d="M22 34h19" stroke="#8bd0f2" stroke-width="8"/>',
+ dog:'<path d="M13 24 8 12q-2-6 5-4l13 12q5-2 10 0L49 9q7-2 5 5l-5 15q5 20-18 24Q10 49 13 24" fill="#b98258" stroke="#855b3c" stroke-width="2"/><circle cx="23" cy="29" r="2.5" fill="#302b2a"/><circle cx="38" cy="29" r="2.5" fill="#302b2a"/><ellipse cx="30" cy="37" rx="6" ry="4" fill="#302b2a"/>',
+ plate:'<circle cx="30" cy="32" r="22" fill="#fff" stroke="#68a9d3" stroke-width="4"/><circle cx="30" cy="32" r="13" fill="#dff5ff" stroke="#68a9d3" stroke-width="2"/>',
+ bin:'<path d="M16 18h28l-3 38H19z" fill="#9ca9b8" stroke="#596a7b" stroke-width="3"/><path d="M12 18h36M23 12h14" stroke="#596a7b" stroke-width="4" stroke-linecap="round"/>',
+ star:'<path d="m30 7 7 15 16 2-12 11 3 17-14-8-14 8 3-17L7 24l16-2z" fill="#f3c54f" stroke="#c99922" stroke-width="2"/>'
+ };
+ return '<span class="pictogram" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;border-radius:12px;background:'+bg+'"><svg width="38" height="38" viewBox="0 0 60 64" xmlns="http://www.w3.org/2000/svg">'+paths[kind]+'</svg></span>';
 }
 function render(id){
  var root=document.getElementById(id);
@@ -104,7 +128,7 @@ function render(id){
   var checks=[];
   r.steps.forEach(function(t){
    var b=document.createElement('button');b.type='button';b.className='task';b.setAttribute('aria-pressed','false');
-   var pic=document.createElement('span');pic.className='picture';pic.textContent=picture(t);var label=document.createElement('span');label.className='label';label.textContent=t;
+   var pic=document.createElement('span');pic.className='picture';pic.innerHTML=picture(t);var label=document.createElement('span');label.className='label';label.textContent=t;
    var mark=document.createElement('span');mark.className='check';mark.textContent='○';
    b.appendChild(pic);b.appendChild(label);b.appendChild(mark);section.appendChild(b);checks.push(b);
    b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';b.setAttribute('aria-pressed',done?'true':'false');};
@@ -113,18 +137,18 @@ function render(id){
   var requestId=id+'_'+isoDate+'_routine_'+i;
   function refresh(){send.disabled=!checks.every(function(c){return c.classList.contains('done');})||!window.hubCanSubmit||!!window.hubRequestStatus[requestId];}
   checks.forEach(function(b){b.addEventListener('click',refresh);});
-  send.onclick=function(){window.hubSubmit(requestId,id,'routine_'+i,send);};
+  send.onclick=function(){window.hubSubmit(requestId,id,r.title+' routine',send);};
   window.hubControls.push({id:requestId,button:send,refresh:refresh});
   section.appendChild(send);
   var note=document.createElement('p');note.className='note';note.textContent='Complete every step, then submit for parent review. One possible star after the rewards system is enabled.';section.appendChild(note);
   root.appendChild(section);
  });
  var paidSection=document.createElement('section');paidSection.className='paid-section';
- var paidTitle=document.createElement('h3');paidTitle.textContent='💰 Paid chores · $0.75 each';paidSection.appendChild(paidTitle);
+ var paidTitle=document.createElement('h3');paidTitle.textContent='Paid chores · $0.75 each';paidSection.appendChild(paidTitle);
  var paidNote=document.createElement('p');paidNote.className='note';paidNote.textContent='Separate from stars. Each chore requires parent approval before earning $0.75. Up to 20 paid opportunities ($15) per week. This schedule is a draft.';paidSection.appendChild(paidNote);
  paid[id].forEach(function(chore,i){
   var b=document.createElement('button');b.type='button';b.className='paid-item';b.setAttribute('aria-pressed','false');
-  var icon=document.createElement('span');icon.className='picture';icon.textContent=chore.icon;
+  var icon=document.createElement('span');icon.className='picture';icon.innerHTML=picture(chore.title);
   var label=document.createElement('span');label.className='paid-label';label.textContent=chore.title;
   var amount=document.createElement('span');amount.className='amount';amount.textContent='$0.75';
   var mark=document.createElement('span');mark.className='mark';mark.textContent='○';
@@ -135,7 +159,7 @@ function render(id){
   var requestId=id+'_'+isoDate+'_paid_'+i;
   function refresh(){send.disabled=!b.classList.contains('done')||!window.hubCanSubmit||!!window.hubRequestStatus[requestId];}
   b.addEventListener('click',refresh);
-  send.onclick=function(){window.hubSubmit(requestId,id,'paid_'+i,send);};
+  send.onclick=function(){window.hubSubmit(requestId,id,chore.title,send);};
   window.hubControls.push({id:requestId,button:send,refresh:refresh});
   paidSection.appendChild(send);
  });
@@ -162,7 +186,8 @@ var deviceStatus=document.getElementById('device-status');
 function refreshControls(){window.hubControls.forEach(function(c){c.refresh();var st=window.hubRequestStatus[c.id];if(st)c.button.textContent=st==='pending'?'Waiting for approval':st==='approved'?'Approved by parent':'Returned by parent';else c.button.textContent=c.id.indexOf('_routine_')>=0?'Submit routine for approval':'Submit chore for approval';});}
 window.hubSubmit=function(id,child,taskId,button){if(!window.hubCanSubmit)return;button.disabled=true;button.textContent='Submitting…';requests.doc(id).set({child:child,taskId:taskId,date:id.split('_')[1],submittedAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'}).then(function(){window.hubRequestStatus[id]='pending';refreshControls();}).catch(function(err){button.textContent='Try submitting again';refreshControls();alert('Could not submit: '+err.message);});};
 function clearApprovals(){document.getElementById('approval-list').textContent='';}
-function showApprovals(snapshot){var root=document.getElementById('approval-list');clearApprovals();var count=0;snapshot.forEach(function(doc){var d=doc.data();if(d.status!=='pending')return;count++;var card=document.createElement('div');card.className='approval-card';var name=document.createElement('strong');name.textContent=(d.child==='kieran'?'🤠 Kieran':'🩰 Evie')+' — '+d.taskId;card.appendChild(name);var date=document.createElement('small');date.textContent=d.date+' · Pending parent review';card.appendChild(date);['Approve','Send back'].forEach(function(action){var btn=document.createElement('button');btn.type='button';btn.textContent=action;if(action==='Send back')btn.className='reject';btn.onclick=function(){btn.disabled=true;requests.doc(doc.id).update({status:action==='Approve'?'approved':'rejected'}).catch(function(e){btn.disabled=false;alert(e.message);});};card.appendChild(btn);});root.appendChild(card);});document.getElementById('approval-status').textContent=count?count+' pending request(s). Approvals do not yet award stars or money.':'No pending chores.';}
+function friendlyTaskLabel(d){var task=String(d.taskId||'');if(/^routine_\d+$/.test(task)){var dt=new Date(String(d.date||'')+'T12:00:00');var wd=dt.getDay(),idx=Number(task.split('_')[1]),names;if(wd>=1&&wd<=5){names=d.child==='kieran'?['School morning','After school','Evening routine']:['Morning','Evening routine'];}else if(wd===0){names=['Church morning','Evening routine'];}else{names=['Evening routine'];}return (names[idx]||'Daily')+' routine';}if(/^paid_\d+$/.test(task)){var i=Number(task.split('_')[1]),paidNames=d.child==='kieran'?['Feed Keekee (wet food)','Empty dishwasher (if ready)','Help prepare dinner','Help Mom or Dad with an assigned task']:['Help unload dishwasher (silverware, if ready)','Help prepare food'];return paidNames[i]||'Paid chore';}return task;}
+function showApprovals(snapshot){var root=document.getElementById('approval-list');clearApprovals();var count=0;snapshot.forEach(function(doc){var d=doc.data();if(d.status!=='pending')return;count++;var card=document.createElement('div');card.className='approval-card';var name=document.createElement('strong');name.textContent=(d.child==='kieran'?'🤠 Kieran':'🩰 Evie')+' — '+friendlyTaskLabel(d);card.appendChild(name);var date=document.createElement('small');date.textContent=d.date+' · Pending parent review';card.appendChild(date);['Approve','Send back'].forEach(function(action){var btn=document.createElement('button');btn.type='button';btn.textContent=action;if(action==='Send back')btn.className='reject';btn.onclick=function(){btn.disabled=true;requests.doc(doc.id).update({status:action==='Approve'?'approved':'rejected'}).catch(function(e){btn.disabled=false;alert(e.message);});};card.appendChild(btn);});root.appendChild(card);});document.getElementById('approval-status').textContent=count?count+' pending request(s). Approvals do not yet award stars or money.':'No pending chores.';}
 
 function errorText(err){return (err&&err.message)?err.message:'An unexpected error occurred.';}
 login.onclick=function(){status.textContent='Opening Google sign-in…';auth.signInWithPopup(provider).catch(function(err){if(err.code==='auth/popup-blocked'||err.code==='auth/operation-not-supported-in-this-environment'){auth.signInWithRedirect(provider).catch(function(e){status.textContent=errorText(e);});}else{status.textContent=errorText(err);}});};
