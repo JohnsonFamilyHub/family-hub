@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Johnson Family Hub</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#f6f7fc;color:#243047}header{background:#fff;padding:20px 16px;text-align:center;box-shadow:0 2px 12px #1b315012}header h1{margin:0;font-size:26px}header p{margin:6px 0 0;color:#67738b}main{max-width:950px;margin:auto;padding:18px 14px 45px}.welcome{background:#fff;border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 4px 18px #1b31500a}.welcome h2{margin:0 0 6px;font-size:22px}.welcome p{margin:0;color:#627087}.kids{display:flex;gap:16px;align-items:stretch}.kid{width:50%;border-radius:20px;padding:20px;box-shadow:0 6px 20px #1b315015}.kid.blue{background:#e5f1ff}.kid.pink{background:#ffe6f1}.kid h2{margin:0 0 5px;font-size:25px}.kid .subtitle{margin:0 0 14px;color:#526078}.task{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;margin:9px 0;padding:12px;border:2px solid transparent;border-radius:15px;background:#fff;color:#243047;text-align:left;font-size:17px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}.task .picture{font-size:31px;width:40px;text-align:center;flex-shrink:0}.task .label{flex:1}.task .check{font-size:25px;color:#9aa7b8}.task.done{border-color:#4baf83;background:#f2fff8}.task.done .check{color:#258b60}.note{font-size:13px;color:#56657c;line-height:1.5;margin-top:12px}.parent{margin-top:20px;padding:20px;border-radius:18px;background:#fff;box-shadow:0 4px 18px #1b31500a}.parent h2{margin:0 0 8px}.parent p{color:#627087;line-height:1.5}.pill{display:inline-block;border-radius:100px;background:#eef0f5;padding:7px 12px;font-size:13px;font-weight:700;color:#5b6475}.footer{text-align:center;color:#798398;font-size:13px;margin-top:22px}@media(max-width:650px){.kids{display:block}.kid{width:100%;margin-bottom:16px}.task{min-height:72px}header h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header><h1>🏡 Johnson Family Hub</h1><p>Our family's happy place</p></header>
+<main>
+<section class="welcome"><h2>☀️ Today's Family Dashboard</h2><p id="today">Welcome home!</p></section>
+<div class="kids">
+<section class="kid blue"><h2>💙 Kieran</h2><p class="subtitle">Tap a chore when it's finished!</p><div id="kieran"></div><p class="note">Demo checklist only. Chores are not submitted for approval yet.</p></section>
+<section class="kid pink"><h2>💗 Evie</h2><p class="subtitle">Tap a chore when it's finished!</p><div id="evie"></div><p class="note">Demo checklist only. Chores are not submitted for approval yet.</p></section>
+</div>
+<section class="parent"><h2>🔒 Parent Area</h2><span class="pill">Coming in the next build</span><p>Mom and Josh will manage the shared calendar, groceries, household tasks, chore approvals, stars, allowance, and rewards here.</p><p><strong>Security:</strong> This preview does not unlock parent features or connect to Firebase. We'll add authenticated parent access and the five-minute PIN lock before enabling shared family data.</p></section>
+<div class="footer">Made for the Johnson family ❤️</div>
+</main>
+<script>
+(function(){
+'use strict';
+var now=new Date();
+var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var day=now.getDay();
+var dateText=days[day]+', '+now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+document.getElementById('today').textContent=dateText;
+var kieran=[['🐈‍⬛','Feed Keekee (wet food)'],['🪥','Brush teeth'],['🧸','Put away toys']];
+var evie=[['🐕','Feed Ozzy & Dolly — morning'],['🐕','Feed Ozzy & Dolly — evening'],['🪥','Brush teeth']];
+if(day===0){kieran.push(['🐈‍⬛','Clean Keekee’s litter box']);evie.push(['💧','Refill Keekee’s water']);}
+if(day===1||day===3||day===5){evie.push(['💧','Refill Keekee’s water']);}
+if(day===2||day===4||day===6||day===0){evie.push(['🍽️','Set the table']);}
+if(day===6){kieran.push(['🧺','Wash and put away laundry'],['🛏️','Change bedsheets']);evie.push(['🧺','Wash and put away laundry'],['🛏️','Change bedsheets']);}
+function render(id,tasks){var root=document.getElementById(id);tasks.forEach(function(t){var b=document.createElement('button');b.type='button';b.className='task';b.setAttribute('aria-pressed','false');var pic=document.createElement('span');pic.className='picture';pic.textContent=t[0];var label=document.createElement('span');label.className='label';label.textContent=t[1];var check=document.createElement('span');check.className='check';check.textContent='○';b.appendChild(pic);b.appendChild(label);b.appendChild(check);b.onclick=function(){var isDone=b.classList.toggle('done');check.textContent=isDone?'✓':'○';b.setAttribute('aria-pressed',isDone?'true':'false');};root.appendChild(b);});}
+render('kieran',kieran);render('evie',evie);
+})();
+</script>
+</body>
+</html>
