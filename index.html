@@ -14,6 +14,10 @@
 </style>
 <style>.submit-routine,.submit-paid{background:#2457a7;color:white;border:0;border-radius:11px;padding:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}.submit-routine:disabled,.submit-paid:disabled{opacity:.55}.submit-paid{width:100%}.approval-card{padding:12px;margin:10px 0;border:1px solid #d9e1ef;border-radius:12px;background:#f7faff}.approval-card button{margin:6px 7px 0 0}.approval-card .reject{background:#87546a}.approval-card small{display:block;color:#627087;margin-top:4px}.submit-message{font-size:13px;color:#385b80;margin:6px 0 12px}.profile-icon{display:inline-flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:16px;margin:0 auto 6px;background:#fff8;vertical-align:middle}.profile-icon svg{width:48px;height:48px;display:block}.kid h2 .profile-icon{width:42px;height:42px;margin:0 6px 0 0;border-radius:10px}.kid h2 .profile-icon svg{width:36px;height:36px}.profile-icon.hat{background:#dcecff}.profile-icon.ballet{background:#ffe0ed}.pictogram svg{display:block;overflow:visible}
 </style>
+<style>
+.manager{margin-top:22px;border-top:2px solid #e4e9f3;padding-top:16px}.manager .manage-row{padding:12px;border:1px solid #dce3ee;border-radius:12px;margin:9px 0;background:#fbfcff}.manage-row strong{display:block;margin-bottom:5px}.manage-row small{display:block;color:#627087;margin-bottom:7px}.manager button{margin:4px 5px 4px 0}.manager .secondary{background:#526b83}.manager .danger{background:#87546a}.manager-form{background:#f2f6fc;border-radius:12px;padding:14px;margin-top:12px}.manager-form label{display:block;font-weight:700;font-size:14px;margin:12px 0 4px}.manager-form input,.manager-form textarea,.manager-form select{display:block;width:100%;max-width:100%;border:1px solid #aebbd0;border-radius:8px;padding:10px;font:16px Arial,sans-serif}.manager-form textarea{min-height:80px}.days-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}.days-grid label{display:flex;align-items:center;gap:4px;margin:0;font-weight:400}.days-grid input{width:auto}.manager .manager-note{font-size:13px;color:#526078}.manager .manager-message{font-size:14px;color:#2457a7}
+</style>
+<style>.shopping-area{margin-top:18px;padding:14px;border-radius:14px;background:#f6f8fc}.shopping-group{padding:12px;margin:12px 0;background:white;border:1px solid #dbe2ed;border-radius:12px}.shopping-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid #edf0f5}.shopping-row:last-child{border-bottom:0}.shopping-row span{flex:1;min-width:120px}.shopping-row select{font-size:16px;max-width:160px;padding:7px}.shopping-area button{font-size:13px;padding:8px 10px}.shopping-area .purchased{color:#486079;font-size:14px;padding:8px 0}.grocery-choice{display:flex;align-items:center;gap:8px}.grocery-choice input{width:20px;height:20px;flex:none}.grocery-choice span{flex:1}.shopping-area .store-actions{display:flex;gap:5px;flex-wrap:wrap}</style>
 </head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1><p>Our family's happy place</p></header>
@@ -25,140 +29,52 @@
 <section class="kid blue hidden" id="kieran-panel"><h2><span class="profile-emoji" aria-hidden="true">⭐</span> Kieran</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat">⭐ Stars: —</span><span class="stat">💵 This week: — / $15</span></div><div id="kieran"></div></section>
 <section class="kid pink hidden" id="evie-panel"><h2><span class="profile-emoji" aria-hidden="true">🎀</span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat">⭐ Stars: —</span><span class="stat">💵 This week: — / $15</span></div><div id="evie"></div></section>
 </div>
-<section class="parent"><h2>🔒 Parent Area</h2><p id="parent-message">Sign in with an approved parent Google account to access shared family information.</p><div id="parent-content" class="hidden"><h3>🛒 Shared grocery list</h3><p>Add an item here, then check another parent's phone to confirm syncing.</p><form id="grocery-form"><input id="grocery-input" maxlength="100" placeholder="Add a grocery item" required><button type="submit">Add</button></form><ul id="grocery-list"></ul><p class="status" id="grocery-status"></p><h3>📝 Chore approvals</h3><p class="status" id="approval-status">Loading…</p><div id="approval-list"></div><h3>Coming next</h3><p>Automatic stars, allowance balances, rewards, calendar and household tasks.</p></div><p class="note">Chore approval pilot only: approving does not award money or stars. Paid chore schedules are finalized; earnings tracking is not enabled yet. No PIN lock is implemented yet.</p></section>
+<section class="parent"><h2>🔒 Parent Area</h2><p id="parent-message">Sign in with an approved parent Google account to access shared family information.</p><div id="parent-content" class="hidden"><h3>🛒 Shared grocery list</h3><p>Add an item here, then check another parent's phone to confirm syncing.</p><form id="grocery-form"><input id="grocery-input" maxlength="100" placeholder="Add a grocery item" required><button type="submit">Add</button></form><ul id="grocery-list"></ul><button type="button" id="create-shopping">Create shopping list from selected items</button><p class="status" id="grocery-status"></p><section class="shopping-area"><h3>🛍️ Shopping List by Store</h3><p class="note">Stores are remembered for next time. Move an item without changing its default, or save a new preferred store.</p><div id="shopping-groups"></div><h4>Recently purchased</h4><div id="shopping-purchased"></div><p class="status" id="shopping-status"></p></section><h3>📝 Chore approvals</h3><p class="status" id="approval-status">Loading…</p><div id="approval-list"></div><section class="manager" id="chore-manager"><h3>✏️ Manage Chores & Stars</h3><p class="manager-note">Edit schedules for both kids. Changes sync to the homebase iPad. Parent approval is still required; rewards are not automatically credited yet.</p><p id="manager-status" class="manager-message">Loading schedules…</p><div id="manager-list"></div><button id="manager-add" type="button">+ Add chore or routine</button><div id="manager-editor" class="manager-form hidden"><h4 id="manager-editor-title">Edit task</h4><form id="manager-form"><label for="manager-child">Child</label><select id="manager-child"><option value="kieran">Kieran</option><option value="evie">Evie</option></select><label for="manager-kind">Type</label><select id="manager-kind"><option value="paid">Paid chore</option><option value="star">Star routine</option></select><label for="manager-name">Name</label><input id="manager-name" maxlength="100" required><label for="manager-icon">Emoji (optional)</label><input id="manager-icon" maxlength="8" placeholder="⭐"><label for="manager-steps">Checklist steps (one per line; for star routines)</label><textarea id="manager-steps" maxlength="1500" placeholder="Brush teeth&#10;Get dressed"></textarea><label for="manager-amount">Value ($ for paid chores, stars for routines)</label><input id="manager-amount" type="number" min="0" max="15" step="0.25" value="0.75" required><label>Scheduled days</label><div class="days-grid" id="manager-days"></div><p class="manager-note">Changes to amounts apply to future submissions, not previously approved work. The original $15 weekly target is not automatically enforced yet.</p><button type="submit" id="manager-save">Save changes</button><button type="button" class="secondary" id="manager-cancel">Cancel</button></form></div></section><h3>Coming next</h3><p>Automatic stars, allowance balances, rewards, calendar and household tasks.</p></div><p class="note">Chore approval pilot only: approving does not award money or stars. Paid chore schedules are finalized; earnings tracking is not enabled yet. No PIN lock is implemented yet.</p></section>
 <div class="footer">Made for the Johnson family ❤️</div>
 </main>
 <script>
 (function(){
 'use strict';
-var now=new Date();
-var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var day=now.getDay();
+var now=new Date(),day=now.getDay(),days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var isoDate=now.getFullYear()+'-'+('0'+(now.getMonth()+1)).slice(-2)+'-'+('0'+now.getDate()).slice(-2);
-var dateText=days[day]+', '+now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-document.getElementById('today').textContent=dateText;
+document.getElementById('today').textContent=days[day]+', '+now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 window.hubControls=[];window.hubRequestStatus={};window.hubCanSubmit=false;
-var routines={
- kieran:[],evie:[]
-};
-function add(k,title,icon,steps){routines[k].push({title:title,icon:icon,steps:steps});}
-if(day>=1&&day<=5){
- add('kieran','School morning','☀️',['Wake up at 5:30','Brush teeth','Get dressed in uniform, socks and shoes','Fill water bottle','Ready to leave']);
- add('evie','Morning','☀️',['Wake up at 5:30','Brush teeth','Get dressed, socks and shoes','Ready to leave']);
- add('kieran','After school','🎒',['Shower independently','Put dirty clothes in hamper','Change into comfortable clothes']);
-}
-if(day===0){
- add('kieran','Church morning','⛪',['Wake up by 7:00','Brush teeth','Get dressed, socks and shoes','Ready to leave by 8:00']);
- add('evie','Church morning','⛪',['Wake up by 7:00','Brush teeth','Get dressed, socks and shoes','Ready to leave by 8:00']);
-}
-var kEvening=['Put away toys and belongings','Feed Keekee (separate paid chore)','Brush teeth upstairs','Use bathroom','In bed on time'];
-if(day===0||day===6)kEvening.unshift('Shower');
-add('kieran','Evening routine','🌙',kEvening);
-add('evie','Evening routine','🌙',['Shower (parent helps with hair)','Put dirty clothes in hamper','Change into comfortable clothes','Put away toys and belongings','Brush teeth','Use bathroom','In bed on time']);
-if(day===2)add('kieran','Refill chicken feed','🐔',['Refill all three chicken feed buckets']);
-if(day===6)add('kieran','Saturday chickens','🐔',['Refill all three feed buckets','Feed chickens']);
-if(day===2||day===4)add('evie','Workbook with Mom','📖',['Complete workbook time with Mom']);
-if(day===3)add('evie','Bring in the milk','🥛',['Bring milk inside from the milkbox']);
-if(day===0||day===1||day===3||day===5)add('evie','Keekee’s water','💧',['Refill Keekee’s water']);
-var paid={kieran:[],evie:[]};
-function pay(k,icon,title,key){paid[k].push({icon:icon,title:title,key:key});}
-// Finalized schedules: 20 distinct weekly opportunities for each child.
-// Kieran: 7 + 3 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 = 20.
-pay('kieran','💰','Feed Keekee (wet food)','feed_keekee');
-if(day===2||day===4||day===5)pay('kieran','🍽️','Unload dishwasher','dishwasher');
-if(day===2||day===5)pay('kieran','🗑️','Empty household garbage pails and replace bags','small_trash');
-if(day===1||day===3)pay('kieran','🤝','Help Mom or Dad with an assigned task','parent_help');
-if(day===3)pay('kieran','🗑️','Take trash bins to curb','trash_out');
-if(day===4)pay('kieran','🗑️','Bring trash bins back in','trash_in');
-if(day===6){
- pay('kieran','🧺','Wash and put away own laundry','laundry');
- pay('kieran','🛏️','Change own bedsheets','bedsheets');
- pay('kieran','🧽','Wash and replace four first-floor rugs','rugs');
-}
-if(day===0)pay('kieran','🐈','Clean Keekee’s litter box','litter');
-// Evie: 7 + 7 + 4 + 1 + 1 = 20. Feeding both dogs morning and evening
-// counts as ONE opportunity, not two. No scheduled plant watering.
-pay('evie','🍴','Put away clean silverware','silverware');
-pay('evie','🐕','Feed Ozzy & Dolly (morning and evening)','feed_dogs');
-if(day===2||day===4||day===6||day===0)pay('evie','🍽️','Set the dinner table','set_table');
-if(day===6){
- pay('evie','🧺','Wash and put away own laundry','laundry');
- pay('evie','🛏️','Help change own bedsheets','bedsheets');
-}
-// Older iPad (iOS 12): use familiar emoji and plain text, not custom SVG artwork.
-function picture(t){
- var x=t.toLowerCase(),symbol='⭐';
- if(x.indexOf('feed keekee (wet')>=0)symbol='$';
- else if(x.indexOf('silverware')>=0)symbol='🍴';
- else if(x.indexOf('water')>=0)symbol='💧';
- else if(x.indexOf('teeth')>=0)symbol='😁';
- else if(x.indexOf('wake')>=0)symbol='⏰';
- else if(x.indexOf('hamper')>=0)symbol='🧺';
- else if(x.indexOf('comfortable clothes')>=0)symbol='👖';
- else if(x.indexOf('uniform')>=0||x.indexOf('dressed')>=0)symbol='👕';
- else if(x.indexOf('shower')>=0)symbol='🚿';
- else if(x.indexOf('bathroom')>=0)symbol='🚽';
- else if(x.indexOf('leave')>=0)symbol='🎒';
- else if(x.indexOf('laundry')>=0)symbol='🧺';
- else if(x.indexOf('bedsheet')>=0||x.indexOf('bed on time')>=0)symbol='🛏';
- else if(x.indexOf('ozzy')>=0||x.indexOf('dolly')>=0)symbol='🐕';
- else if(x.indexOf('keekee')>=0||x.indexOf('litter')>=0)symbol='🐈';
- else if(x.indexOf('garbage')>=0||x.indexOf('trash')>=0||x.indexOf('bins')>=0)symbol='🗑';
- else if(x.indexOf('dishwasher')>=0||x.indexOf('dinner')>=0||x.indexOf('table')>=0)symbol='🍽';
- else if(x.indexOf('rugs')>=0)symbol='🧽';
- else if(x.indexOf('milk')>=0)symbol='🥛';
- else if(x.indexOf('chicken')>=0)symbol='🐔';
- else if(x.indexOf('workbook')>=0)symbol='📖';
- else if(x.indexOf('help mom')>=0)symbol='🤝';
- else if(x.indexOf('toys')>=0)symbol='🧸';
- return '<span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;font-size:29px">'+symbol+'</span>';
-}
-function render(id){
- var root=document.getElementById(id);
- routines[id].forEach(function(r,i){
-  var section=document.createElement('section');section.className='routine';
-  var h=document.createElement('h3');h.textContent=r.icon+' '+r.title+' · 1 possible star';section.appendChild(h);
-  var checks=[];
-  r.steps.forEach(function(t){
-   var b=document.createElement('button');b.type='button';b.className='task';b.setAttribute('aria-pressed','false');
-   var pic=document.createElement('span');pic.className='picture';pic.innerHTML=picture(t);var label=document.createElement('span');label.className='label';label.textContent=t;
-   var mark=document.createElement('span');mark.className='check';mark.textContent='○';
-   b.appendChild(pic);b.appendChild(label);b.appendChild(mark);section.appendChild(b);checks.push(b);
-   b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';b.setAttribute('aria-pressed',done?'true':'false');};
-  });
-  var send=document.createElement('button');send.type='button';send.className='submit-routine';send.textContent='Submit routine for approval';send.disabled=true;
-  var requestId=id+'_'+isoDate+'_routine_'+i;
-  function refresh(){send.disabled=!checks.every(function(c){return c.classList.contains('done');})||!window.hubCanSubmit||!!window.hubRequestStatus[requestId];}
-  checks.forEach(function(b){b.addEventListener('click',refresh);});
-  send.onclick=function(){window.hubSubmit(requestId,id,r.title+' routine',send);};
-  window.hubControls.push({id:requestId,button:send,refresh:refresh});
-  section.appendChild(send);
-  var note=document.createElement('p');note.className='note';note.textContent='Complete every step, then submit for parent review. One possible star after the rewards system is enabled.';section.appendChild(note);
-  root.appendChild(section);
- });
- var paidSection=document.createElement('section');paidSection.className='paid-section';
- var paidTitle=document.createElement('h3');paidTitle.textContent='Paid chores · $0.75 each · 20 per week';paidSection.appendChild(paidTitle);
- var paidNote=document.createElement('p');paidNote.className='note';paidNote.textContent='Separate from stars. Each chore requires parent approval before earning $0.75. Up to 20 paid opportunities ($15) per week. This is the finalized weekly schedule.';paidSection.appendChild(paidNote);
- paid[id].forEach(function(chore,i){
-  var b=document.createElement('button');b.type='button';b.className='paid-item';b.setAttribute('aria-pressed','false');
-  var icon=document.createElement('span');icon.className='picture';icon.innerHTML=picture(chore.title);
-  var label=document.createElement('span');label.className='paid-label';label.textContent=chore.title;
-  var amount=document.createElement('span');amount.className='amount';amount.textContent='$0.75';
-  var mark=document.createElement('span');mark.className='mark';mark.textContent='○';
-  b.appendChild(icon);b.appendChild(label);b.appendChild(amount);b.appendChild(mark);
-  b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';b.setAttribute('aria-pressed',done?'true':'false');};
-  paidSection.appendChild(b);
-  var send=document.createElement('button');send.type='button';send.className='submit-paid';send.textContent='Submit chore for approval';send.disabled=true;
-  var requestId=id+'_'+isoDate+'_paid_'+chore.key;
-  function refresh(){send.disabled=!b.classList.contains('done')||!window.hubCanSubmit||!!window.hubRequestStatus[requestId];}
-  b.addEventListener('click',refresh);
-  send.onclick=function(){window.hubSubmit(requestId,id,chore.title,send);};
-  window.hubControls.push({id:requestId,button:send,refresh:refresh});
-  paidSection.appendChild(send);
- });
- root.appendChild(paidSection);
-}
-render('kieran');render('evie');
+var all=[0,1,2,3,4,5,6],weekdays=[1,2,3,4,5];
+function t(id,child,kind,name,icon,scheduled,steps,value){return {id:id,child:child,kind:kind,name:name,icon:icon,days:scheduled,steps:steps||[],value:value,active:true};}
+window.hubDefaults=[
+t('k-school','kieran','star','School morning','☀️',weekdays,['Wake up at 5:30','Brush teeth','Get dressed in uniform, socks and shoes','Fill water bottle','Ready to leave'],1),
+t('k-after','kieran','star','After school','🎒',weekdays,['Shower independently','Put dirty clothes in hamper','Change into comfortable clothes'],1),
+t('k-church','kieran','star','Church morning','⛪',[0],['Wake up by 7:00','Brush teeth','Get dressed, socks and shoes','Ready to leave by 8:00'],1),
+t('k-evening','kieran','star','Evening routine','🌙',all,['Put away toys and belongings','Feed Keekee (separate paid chore)','Brush teeth upstairs','Use bathroom','In bed on time'],1),
+t('k-chick-tue','kieran','star','Refill chicken feed','🐔',[2],['Refill all three chicken feed buckets'],1),
+t('k-chick-sat','kieran','star','Saturday chickens','🐔',[6],['Refill all three feed buckets','Feed chickens'],1),
+t('e-morning','evie','star','Morning','☀️',weekdays,['Wake up at 5:30','Brush teeth','Get dressed, socks and shoes','Ready to leave'],1),
+t('e-church','evie','star','Church morning','⛪',[0],['Wake up by 7:00','Brush teeth','Get dressed, socks and shoes','Ready to leave by 8:00'],1),
+t('e-evening','evie','star','Evening routine','🌙',all,['Shower (parent helps with hair)','Put dirty clothes in hamper','Change into comfortable clothes','Put away toys and belongings','Brush teeth','Use bathroom','In bed on time'],1),
+t('e-workbook','evie','star','Workbook with Mom','📖',[2,4],['Complete workbook time with Mom'],1),
+t('e-milk','evie','star','Bring in the milk','🥛',[3],['Bring milk inside from the milkbox'],1),
+t('e-water','evie','star','Keekee’s water','💧',[0,1,3,5],['Refill Keekee’s water'],1),
+t('feed_keekee','kieran','paid','Feed Keekee (wet food)','💰',all,[],.75),
+t('dishwasher','kieran','paid','Unload dishwasher','🍽️',[2,4,5],[],.75),
+t('small_trash','kieran','paid','Empty household garbage pails and replace bags','🗑️',[2,5],[],.75),
+t('parent_help','kieran','paid','Help Mom or Dad with an assigned task','🤝',[1,3],[],.75),
+t('trash_out','kieran','paid','Take trash bins to curb','🗑️',[3],[],.75),
+t('trash_in','kieran','paid','Bring trash bins back in','🗑️',[4],[],.75),
+t('laundry','kieran','paid','Wash and put away own laundry','🧺',[6],[],.75),
+t('bedsheets','kieran','paid','Change own bedsheets','🛏️',[6],[],.75),
+t('rugs','kieran','paid','Wash and replace four first-floor rugs','🧽',[6],[],.75),
+t('litter','kieran','paid','Clean Keekee’s litter box','🐈',[0],[],.75),
+t('silverware','evie','paid','Put away clean silverware','🍴',all,[],.75),
+t('feed_dogs','evie','paid','Feed Ozzy & Dolly (morning and evening)','🐕',all,[],.75),
+t('set_table','evie','paid','Set the dinner table','🍽️',[0,2,4,6],[],.75),
+t('laundry','evie','paid','Wash and put away own laundry','🧺',[6],[],.75),
+t('bedsheets','evie','paid','Help change own bedsheets','🛏️',[6],[],.75)
+];
+window.hubTasks=window.hubDefaults.slice();
+function pict(t){var x=t.toLowerCase(),symbol='⭐';if(x.indexOf('teeth')>=0)symbol='😁';else if(x.indexOf('wake')>=0)symbol='⏰';else if(x.indexOf('hamper')>=0)symbol='🧺';else if(x.indexOf('comfortable')>=0)symbol='👖';else if(x.indexOf('dressed')>=0)symbol='👕';else if(x.indexOf('shower')>=0)symbol='🚿';else if(x.indexOf('bathroom')>=0)symbol='🚽';else if(x.indexOf('leave')>=0)symbol='🎒';else if(x.indexOf('bed')>=0)symbol='🛏️';else if(x.indexOf('keekee')>=0)symbol='🐈';else if(x.indexOf('toys')>=0)symbol='🧸';else if(x.indexOf('water')>=0)symbol='💧';return symbol;}
+function mk(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
+window.hubRender=function(tasks){window.hubTasks=tasks;window.hubControls=[];['kieran','evie'].forEach(function(child){var root=document.getElementById(child);root.textContent='';var todays=tasks.filter(function(x){return x.child===child&&x.active!==false&&x.days.indexOf(day)!==-1;});todays.filter(function(x){return x.kind==='star';}).forEach(function(r){var section=mk('section','routine'),h=mk('h3','',(r.icon||'⭐')+' '+r.name+' · '+Number(r.value||1)+' possible star(s)');section.appendChild(h);var checks=[];var steps=r.steps.slice();if(r.id==='k-evening'&&(day===0||day===6))steps.unshift('Shower');steps.forEach(function(step){var b=mk('button','task');b.type='button';b.setAttribute('aria-pressed','false');b.appendChild(mk('span','picture',pict(step)));b.appendChild(mk('span','label',step));var mark=mk('span','check','○');b.appendChild(mark);b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';b.setAttribute('aria-pressed',done?'true':'false');};checks.push(b);section.appendChild(b);});var send=mk('button','submit-routine','Submit routine for approval');send.type='button';var reqId=child+'_'+isoDate+'_routine_'+r.id;function refresh(){send.disabled=!checks.length||!checks.every(function(b){return b.classList.contains('done');})||!window.hubCanSubmit||!!window.hubRequestStatus[reqId];}checks.forEach(function(b){b.addEventListener('click',refresh);});send.onclick=function(){window.hubSubmit(reqId,child,r.name+' routine',send);};window.hubControls.push({id:reqId,button:send,refresh:refresh});section.appendChild(send);section.appendChild(mk('p','note','Complete every step, then submit for parent review. Stars are not automatically credited yet.'));root.appendChild(section);});var section=mk('section','paid-section');section.appendChild(mk('h3','','Paid chores'));section.appendChild(mk('p','note','Paid chores require parent approval. Allowance balances are not active yet.'));todays.filter(function(x){return x.kind==='paid';}).forEach(function(r){var b=mk('button','paid-item');b.type='button';b.appendChild(mk('span','picture',r.icon||'💰'));b.appendChild(mk('span','paid-label',r.name));b.appendChild(mk('span','amount','$'+Number(r.value).toFixed(2)));var mark=mk('span','mark','○');b.appendChild(mark);b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';};section.appendChild(b);var send=mk('button','submit-paid','Submit chore for approval');send.type='button';var reqId=child+'_'+isoDate+'_paid_'+r.id;function refresh(){send.disabled=!b.classList.contains('done')||!window.hubCanSubmit||!!window.hubRequestStatus[reqId];}b.addEventListener('click',refresh);send.onclick=function(){window.hubSubmit(reqId,child,r.name,send);};window.hubControls.push({id:reqId,button:send,refresh:refresh});section.appendChild(send);});root.appendChild(section);});if(window.hubRefreshControls)window.hubRefreshControls();};
+window.hubRender(window.hubTasks);
 })();
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -175,9 +91,11 @@ firebase.initializeApp(cfg);
 var auth=firebase.auth(),db=firebase.firestore(),provider=new firebase.auth.GoogleAuthProvider(),unsubscribe=null,requestsUnsub=null;
 var homeUid='NzfDaKcjWpWtTNIJHaP0GG5TRg32';
 var requests=db.collection('family').doc('johnson').collection('choreRequests');
+ var configRef=db.collection('family').doc('johnson').collection('config').doc('choreSchedule'),configUnsub=null;
 var deviceStatus=document.getElementById('device-status');
 function refreshControls(){window.hubControls.forEach(function(c){c.refresh();var st=window.hubRequestStatus[c.id];if(st)c.button.textContent=st==='pending'?'Waiting for approval':st==='approved'?'Approved by parent':'Returned by parent';else c.button.textContent=c.id.indexOf('_routine_')>=0?'Submit routine for approval':'Submit chore for approval';});}
-window.hubSubmit=function(id,child,taskId,button){if(!window.hubCanSubmit)return;button.disabled=true;button.textContent='Submitting…';requests.doc(id).set({child:child,taskId:taskId,date:id.split('_')[1],submittedAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'}).then(function(){window.hubRequestStatus[id]='pending';refreshControls();}).catch(function(err){button.textContent='Try submitting again';refreshControls();alert('Could not submit: '+err.message);});};
+window.hubRefreshControls=refreshControls;
+ window.hubSubmit=function(id,child,taskId,button){if(!window.hubCanSubmit)return;button.disabled=true;button.textContent='Submitting…';requests.doc(id).set({child:child,taskId:taskId,date:id.split('_')[1],submittedAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'}).then(function(){window.hubRequestStatus[id]='pending';refreshControls();}).catch(function(err){button.textContent='Try submitting again';refreshControls();alert('Could not submit: '+err.message);});};
 function clearApprovals(){document.getElementById('approval-list').textContent='';}
 function friendlyTaskLabel(d){var task=String(d.taskId||'');if(/^routine_\d+$/.test(task)){var dt=new Date(String(d.date||'')+'T12:00:00');var wd=dt.getDay(),idx=Number(task.split('_')[1]),names;if(wd>=1&&wd<=5){names=d.child==='kieran'?['School morning','After school','Evening routine']:['Morning','Evening routine'];}else if(wd===0){names=['Church morning','Evening routine'];}else{names=['Evening routine'];}return (names[idx]||'Daily')+' routine';}if(/^paid_\d+$/.test(task)){var i=Number(task.split('_')[1]),paidNames=d.child==='kieran'?['Feed Keekee (wet food)','Empty dishwasher (if ready)','Help prepare dinner','Help Mom or Dad with an assigned task']:['Help unload dishwasher (silverware, if ready)','Help prepare food'];return paidNames[i]||'Paid chore';}return task;}
 function showApprovals(snapshot){var root=document.getElementById('approval-list');clearApprovals();var count=0;snapshot.forEach(function(doc){var d=doc.data();if(d.status!=='pending')return;count++;var card=document.createElement('div');card.className='approval-card';var name=document.createElement('strong');name.textContent=(d.child==='kieran'?'Kieran':'Evie')+' — '+friendlyTaskLabel(d);card.appendChild(name);var date=document.createElement('small');date.textContent=d.date+' · Pending parent review';card.appendChild(date);['Approve','Send back'].forEach(function(action){var btn=document.createElement('button');btn.type='button';btn.textContent=action;if(action==='Send back')btn.className='reject';btn.onclick=function(){btn.disabled=true;requests.doc(doc.id).update({status:action==='Approve'?'approved':'rejected'}).catch(function(e){btn.disabled=false;alert(e.message);});};card.appendChild(btn);});root.appendChild(card);});document.getElementById('approval-status').textContent=count?count+' pending request(s). Approvals do not yet award stars or money.':'No pending chores.';}
@@ -186,18 +104,45 @@ function errorText(err){return (err&&err.message)?err.message:'An unexpected err
 login.onclick=function(){status.textContent='Opening Google sign-in…';auth.signInWithPopup(provider).catch(function(err){if(err.code==='auth/popup-blocked'||err.code==='auth/operation-not-supported-in-this-environment'){auth.signInWithRedirect(provider).catch(function(e){status.textContent=errorText(e);});}else{status.textContent=errorText(err);}});};
 logout.onclick=function(){auth.signOut().catch(function(e){status.textContent=errorText(e);});};
 function clearList(){while(list.firstChild)list.removeChild(list.firstChild);}
-auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');info.textContent='';if(!user){deviceStatus.textContent='Kids can view chores; submissions require the registered homebase iPad.';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');return;}
-if(user.isAnonymous){login.classList.add('hidden');logout.classList.add('hidden');status.textContent='🏡 Homebase iPad';
+auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');info.textContent='';if(!user){deviceStatus.textContent='Kids can view chores; submissions require the registered homebase iPad.';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');return;}
+if(user.isAnonymous){subscribeConfig(false);login.classList.add('hidden');logout.classList.add('hidden');status.textContent='🏡 Homebase iPad';
  if(user.uid===homeUid){window.hubCanSubmit=true;deviceStatus.textContent='✅ Authorized homebase iPad: chore submissions enabled.';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.textContent='Cannot load chores: '+e.message;});}
  else{deviceStatus.textContent='This device is not the authorized homebase iPad.';}
  refreshControls();return;}
  login.classList.add('hidden');logout.classList.remove('hidden');status.textContent='Signed in: '+(user.email||'Google account');
 if(!user.emailVerified||parents.indexOf((user.email||'').toLowerCase())===-1){msg.textContent='This Google account is not authorized as a parent. Sign out and use an approved account.';return;}
-msg.textContent='Welcome! Both parents can manage groceries and review chores.';area.classList.remove('hidden');deviceStatus.textContent='Parent mode: use the homebase iPad to submit chores.';requestsUnsub=requests.onSnapshot(showApprovals,function(e){document.getElementById('approval-status').textContent='Cannot load approvals: '+e.message;});
-unsubscribe=db.collection('family').doc('johnson').collection('groceries').orderBy('createdAt','asc').onSnapshot(function(snapshot){clearList();snapshot.forEach(function(doc){var data=doc.data(),li=document.createElement('li'),label=document.createElement('span'),remove=document.createElement('button');label.textContent=String(data.name||'');remove.textContent='Remove';remove.type='button';remove.onclick=function(){db.collection('family').doc('johnson').collection('groceries').doc(doc.id).delete().catch(function(e){info.textContent=errorText(e);});};li.appendChild(label);li.appendChild(remove);list.appendChild(li);});info.textContent=snapshot.empty?'No grocery items yet.':'Shared list updated.';},function(err){info.textContent='Cannot load shared groceries: '+errorText(err)+' Check that Firestore rules are published.';});
+msg.textContent='Welcome! Both parents can manage groceries, chores, stars, and approvals.';subscribeConfig(true);area.classList.remove('hidden');deviceStatus.textContent='Parent mode: use the homebase iPad to submit chores.';requestsUnsub=requests.onSnapshot(showApprovals,function(e){document.getElementById('approval-status').textContent='Cannot load approvals: '+e.message;});
+unsubscribe=db.collection('family').doc('johnson').collection('groceries').orderBy('createdAt','asc').onSnapshot(function(snapshot){window.hubGrocerySnapshot=snapshot;if(window.hubDrawShopping)window.hubDrawShopping();},function(err){info.textContent='Cannot load groceries: '+errorText(err);});
 });
 auth.getRedirectResult().catch(function(err){status.textContent=errorText(err);});
 document.getElementById('grocery-form').onsubmit=function(event){event.preventDefault();var field=document.getElementById('grocery-input'),name=field.value.trim();if(!name)return;info.textContent='Saving…';db.collection('family').doc('johnson').collection('groceries').add({name:name,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){field.value='';}).catch(function(err){info.textContent='Could not save: '+errorText(err);});};
+// Shopping lists use the existing groceries collection; preferred stores persist separately.
+var groceries=db.collection('family').doc('johnson').collection('groceries');
+var prefRef=db.collection('family').doc('johnson').collection('config').doc('storePreferences');
+var preferences={},prefsUnsub=null,purchased=[],picked={};
+var shoppingStatus=document.getElementById('shopping-status');
+var stores=['Unassigned','Costco','King Soopers','Target','Walmart','Safeway','Sprouts','Whole Foods','Trader Joe’s','Sam’s Club'];
+function normalized(name){return String(name||'').trim().toLowerCase();}
+function elem(tag,content){var x=document.createElement(tag);if(content!==undefined)x.textContent=content;return x;}
+function action(label,fn){var b=elem('button',label);b.type='button';b.onclick=fn;return b;}
+function storeSelect(value,onchange){var select=elem('select');var choices=stores.slice();if(value&&choices.indexOf(value)<0)choices.push(value);choices.push('Other store…');choices.forEach(function(st){var o=elem('option',st);o.value=st;select.appendChild(o);});select.value=value||'Unassigned';select.onchange=function(){var chosen=select.value;if(chosen==='Other store…'){chosen=prompt('Store name:','');if(!chosen){select.value=value||'Unassigned';return;}chosen=chosen.trim().slice(0,60);if(!chosen)return;}onchange(chosen);};return select;}
+function prefStore(name){return preferences[normalized(name)]||'Unassigned';}
+function savePreference(name,store){var next={};Object.keys(preferences).forEach(function(k){next[k]=preferences[k];});next[normalized(name)]=store;prefRef.set({stores:next}).catch(function(e){shoppingStatus.textContent='Could not save preferred store: '+e.message;});}
+function updateGrocery(id,changes){groceries.doc(id).update(changes).catch(function(e){shoppingStatus.textContent='Could not update item: '+e.message;});}
+function buy(doc){var data=doc.data(),id=doc.id;groceries.doc(id).delete().then(function(){purchased.unshift({id:id,data:data,name:data.name||'',store:data.store||prefStore(data.name)});purchased=purchased.slice(0,15);draw();}).catch(function(e){shoppingStatus.textContent='Could not mark purchased: '+e.message;});}
+function undoBuy(item){var data=item.data;groceries.doc(item.id).set(data).then(function(){purchased=purchased.filter(function(p){return p!==item;});draw();}).catch(function(e){shoppingStatus.textContent='Could not undo: '+e.message;});}
+function draw(){var snapshot=window.hubGrocerySnapshot;if(!snapshot)return;var original=document.getElementById('grocery-list'),groups=document.getElementById('shopping-groups'),history=document.getElementById('shopping-purchased');original.textContent='';groups.textContent='';history.textContent='';var grouped={},remaining=0,shopping=0;
+ snapshot.forEach(function(doc){var d=doc.data(),name=String(d.name||''),id=doc.id;if(d.shopping){shopping++;var store=d.store||prefStore(name);if(!grouped[store])grouped[store]=[];grouped[store].push(doc);}else{remaining++;var li=elem('li');var label=elem('label');label.className='grocery-choice';var cb=elem('input');cb.type='checkbox';cb.checked=!!picked[id];cb.onchange=function(){picked[id]=cb.checked;};label.appendChild(cb);label.appendChild(elem('span',name));li.appendChild(label);li.appendChild(action('Remove',function(){groceries.doc(id).delete().catch(function(e){shoppingStatus.textContent=e.message;});}));original.appendChild(li);}});
+ Object.keys(grouped).sort().forEach(function(store){var box=elem('div');box.className='shopping-group';box.appendChild(elem('h4',store));grouped[store].forEach(function(doc){var d=doc.data(),name=String(d.name||''),row=elem('div');row.className='shopping-row';row.appendChild(action('✓ Purchased',function(){buy(doc);}));row.appendChild(elem('span',name));row.appendChild(storeSelect(store,function(newStore){updateGrocery(doc.id,{store:newStore});}));row.appendChild(action('Remember store',function(){savePreference(name,store);shoppingStatus.textContent='Preferred store saved for '+name+'.';}));box.appendChild(row);});groups.appendChild(box);});
+ if(!shopping)groups.appendChild(elem('p','No items in your shopping list yet. Select groceries above to get started.'));
+ purchased.forEach(function(item){var row=elem('div');row.className='purchased';row.appendChild(elem('span','✓ '+item.name+' · '+item.store+' '));row.appendChild(action('Undo',function(){undoBuy(item);}));history.appendChild(row);});
+ if(!purchased.length)history.appendChild(elem('p','Purchases appear here until this page is reloaded.'));
+ info.textContent=remaining+' grocery item(s) · '+shopping+' shopping item(s).';
+}
+window.hubDrawShopping=draw;
+document.getElementById('create-shopping').onclick=function(){var snapshot=window.hubGrocerySnapshot;if(!snapshot)return;var batch=db.batch(),n=0;snapshot.forEach(function(doc){if(picked[doc.id]&&!doc.data().shopping){batch.update(doc.ref,{shopping:true,store:prefStore(doc.data().name)});n++;}});if(!n){shoppingStatus.textContent='Select grocery items first.';return;}batch.commit().then(function(){picked={};shoppingStatus.textContent=n+' item(s) added to your shopping list.';}).catch(function(e){shoppingStatus.textContent=e.message;});};
+auth.onAuthStateChanged(function(user){if(prefsUnsub){prefsUnsub();prefsUnsub=null;}preferences={};purchased=[];picked={};window.hubGrocerySnapshot=null;if(user&&!user.isAnonymous&&user.emailVerified&&parents.indexOf((user.email||'').toLowerCase())!==-1){prefsUnsub=prefRef.onSnapshot(function(doc){preferences=doc.exists&&doc.data().stores?doc.data().stores:{};draw();},function(e){shoppingStatus.textContent='Store preferences unavailable: '+e.message;});}});
+
 })();
 </script>
 <script>
