@@ -93,6 +93,76 @@ var homeUid='NzfDaKcjWpWtTNIJHaP0GG5TRg32';
 var requests=db.collection('family').doc('johnson').collection('choreRequests');
  var configRef=db.collection('family').doc('johnson').collection('config').doc('choreSchedule'),configUnsub=null;
 var deviceStatus=document.getElementById('device-status');
+// Parent-only schedule management. The Firestore document contains a tasks array.
+var managerStatus=document.getElementById('manager-status');
+var managerList=document.getElementById('manager-list');
+var managerEditor=document.getElementById('manager-editor');
+var managerForm=document.getElementById('manager-form');
+var editingId=null;
+var scheduleTasks=window.hubDefaults.slice();
+var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var dayGrid=document.getElementById('manager-days');
+dayNames.forEach(function(name,i){var label=document.createElement('label');var check=document.createElement('input');check.type='checkbox';check.value=String(i);label.appendChild(check);label.appendChild(document.createTextNode(' '+name));dayGrid.appendChild(label);});
+function copyTask(task){return JSON.parse(JSON.stringify(task));}
+function updateManager(){
+ managerList.textContent='';
+ scheduleTasks.forEach(function(task){
+  var row=document.createElement('div');row.className='manage-row';
+  var title=document.createElement('strong');title.textContent=(task.icon||'⭐')+' '+task.name;row.appendChild(title);
+  var detail=document.createElement('small');detail.textContent=(task.child==='kieran'?'Kieran':'Evie')+' · '+(task.kind==='paid'?'Paid $'+Number(task.value).toFixed(2):'Stars '+task.value)+' · '+(task.days||[]).map(function(d){return dayNames[d];}).join(', ')+' · '+(task.active===false?'Paused':'Active');row.appendChild(detail);
+  function btn(label,callback){var b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=callback;row.appendChild(b);}
+  btn('Edit',function(){openEditor(task);});
+  btn(task.active===false?'Resume':'Pause',function(){var next=scheduleTasks.map(copyTask);next.forEach(function(t){if(t.id===task.id)t.active=t.active===false;});saveTasks(next);});
+  btn('Remove',function(){if(!confirm('Remove '+task.name+' from future schedules? Previous approvals remain saved.'))return;saveTasks(scheduleTasks.filter(function(t){return t.id!==task.id;}));});
+  managerList.appendChild(row);
+ });
+}
+function openEditor(task){
+ editingId=task?task.id:null;managerEditor.classList.remove('hidden');
+ document.getElementById('manager-editor-title').textContent=task?'Edit task':'Add task';
+ document.getElementById('manager-child').value=task?task.child:'kieran';
+ document.getElementById('manager-kind').value=task?task.kind:'paid';
+ document.getElementById('manager-name').value=task?task.name:'';
+ document.getElementById('manager-icon').value=task?task.icon:'';
+ document.getElementById('manager-steps').value=task?(task.steps||[]).join('\n'):'';
+ document.getElementById('manager-amount').value=task?task.value:.75;
+ var selected=task?task.days:[1,2,3,4,5];
+ Array.prototype.forEach.call(dayGrid.querySelectorAll('input'),function(c){c.checked=selected.indexOf(Number(c.value))!==-1;});
+ managerEditor.scrollIntoView();
+}
+function saveTasks(next){
+ managerStatus.textContent='Saving schedules…';
+ configRef.set({tasks:next}).then(function(){managerStatus.textContent='Schedules saved and synced.';managerEditor.classList.add('hidden');}).catch(function(e){managerStatus.textContent='Could not save: '+e.message;});
+}
+function subscribeConfig(parent){
+ configUnsub=configRef.onSnapshot(function(doc){
+  var data=doc.data(),tasks=data&&Array.isArray(data.tasks)?data.tasks:window.hubDefaults.slice();
+  scheduleTasks=tasks.map(copyTask);
+  window.hubRender(scheduleTasks);
+  refreshControls();
+  if(parent){updateManager();managerStatus.textContent=doc.exists?'Schedules synced.':'Showing default schedules. Save an edit to start syncing custom schedules.';}
+ },function(e){if(parent)managerStatus.textContent='Cannot load schedules: '+e.message;else deviceStatus.textContent='Cannot load schedules: '+e.message;});
+}
+document.getElementById('manager-add').onclick=function(){openEditor(null);};
+document.getElementById('manager-cancel').onclick=function(){managerEditor.classList.add('hidden');};
+managerForm.onsubmit=function(e){
+ e.preventDefault();
+ var name=document.getElementById('manager-name').value.trim();
+ var days=[];Array.prototype.forEach.call(dayGrid.querySelectorAll('input'),function(c){if(c.checked)days.push(Number(c.value));});
+ if(!name||!days.length){managerStatus.textContent='Enter a name and select at least one day.';return;}
+ var kind=document.getElementById('manager-kind').value;
+ var amount=Number(document.getElementById('manager-amount').value);
+ if(!isFinite(amount)||amount<0||amount>15){managerStatus.textContent='Enter a valid amount.';return;}
+ var steps=document.getElementById('manager-steps').value.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+ if(kind==='star'&&!steps.length){managerStatus.textContent='Add at least one checklist step for a star routine.';return;}
+ var task={id:editingId||('custom-'+Date.now()),child:document.getElementById('manager-child').value,kind:kind,name:name,icon:document.getElementById('manager-icon').value.trim()||(kind==='paid'?'💰':'⭐'),days:days,steps:kind==='star'?steps:[],value:amount,active:true};
+ var next=scheduleTasks.map(copyTask),found=false;
+ next.forEach(function(t,i){if(t.id===editingId){task.active=t.active!==false;next[i]=task;found=true;}});
+ if(!found)next.push(task);
+ if(next.length>150){managerStatus.textContent='Maximum 150 tasks.';return;}
+ saveTasks(next);
+};
+
 function refreshControls(){window.hubControls.forEach(function(c){c.refresh();var st=window.hubRequestStatus[c.id];if(st)c.button.textContent=st==='pending'?'Waiting for approval':st==='approved'?'Approved by parent':'Returned by parent';else c.button.textContent=c.id.indexOf('_routine_')>=0?'Submit routine for approval':'Submit chore for approval';});}
 window.hubRefreshControls=refreshControls;
  window.hubSubmit=function(id,child,taskId,button){if(!window.hubCanSubmit)return;button.disabled=true;button.textContent='Submitting…';requests.doc(id).set({child:child,taskId:taskId,date:id.split('_')[1],submittedAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'}).then(function(){window.hubRequestStatus[id]='pending';refreshControls();}).catch(function(err){button.textContent='Try submitting again';refreshControls();alert('Could not submit: '+err.message);});};
