@@ -62,11 +62,12 @@ html,body, input, textarea, select {font-family:'Nunito',Arial,sans-serif;}
 button, .task, .picker, summary, .calendar-toggle {font-family:'Fredoka','Nunito',Arial,sans-serif;}
 h1,h2,h3,h4,h5,h6, .hub-accordion>summary {font-family:'Fredoka','Nunito',Arial,sans-serif;letter-spacing:.1px;}
 button,summary {letter-spacing:.15px;}
+</style>
 <style>
 /* Cozy twilight theme: softer contrast, warmer colors, and depth */
 body{background:radial-gradient(ellipse at 8% 4%,#f2b6b0 0%,transparent 38%),radial-gradient(ellipse at 92% 22%,#b6a0d4 0%,transparent 46%),linear-gradient(165deg,#b7a2cf 0%,#d9b2bf 37%,#f2c5ad 69%,#b5a4cb 100%);background-attachment:fixed;color:#262044;min-height:100vh}
 header{background:linear-gradient(115deg,#ffffffa8,#fff1e7a8);backdrop-filter:blur(8px);box-shadow:0 4px 25px #46345b1b}
-header h1{color:#29204f;font-size:clamp(27px,4vw,38px)}
+header h1{color:#29204f;font-size:clamp(34px,5vw,48px);line-height:1.12}
 header p{color:#60516f}
 .welcome,.family-calendar,.kid-picker,.parent{background:#fff9f5ee;box-shadow:0 9px 25px #3b28552b;border:1px solid #ffffffa6;border-radius:24px}
 .kid.blue,.picker.blue{background:linear-gradient(145deg,#d9f1fc,#b9dbea);border:1px solid #fff9}
@@ -89,10 +90,10 @@ header p{color:#60516f}
 .daily-heading{padding:6px 4px 12px;text-align:center}
 .daily-heading h2{margin:0 0 4px;font-size:clamp(21px,3vw,28px)}
 .daily-heading p{margin:0;color:#5e5471;font-size:14px}
-.daily-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:14px;align-items:start}
+.daily-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:12px;align-items:start}
 .weather-card,.daily-cards .family-calendar{border-radius:22px;padding:16px;min-width:0;box-sizing:border-box;box-shadow:0 7px 20px #3b28551c;border:1px solid #ffffffbd;margin:0}
-.weather-card{background:#e3eefb;color:#29204f;min-height:185px}
-.daily-cards .family-calendar{background:#fce8f1;min-height:185px}
+.weather-card{background:#e3eefb;color:#29204f;min-height:0}
+.daily-cards .family-calendar{background:#fce8f1;min-height:0}
 .weather-card h3,.daily-cards .family-calendar h3{font-size:clamp(16px,2.4vw,21px);margin:0 0 12px;line-height:1.2}
 .weather-main{display:flex;align-items:center;gap:10px}
 #weather-icon{font-size:clamp(28px,5vw,46px)}
@@ -109,14 +110,14 @@ header p{color:#60516f}
 </style>
 </head>
 <body>
-<header><h1>🏡 Johnson Family Hub</h1><p>Our family's happy place</p></header>
+<header><h1>🏡 Johnson Family Hub</h1></header>
 <div class="authbar"><span id="auth-status">Parent sign-in not connected</span><button id="login" type="button">Parent Google sign-in</button><button class="hidden" id="logout" type="button">Sign out</button></div>
 <main>
 <section class="daily-overview" id="daily-overview">
- <div class="daily-heading"><h2>☀️ Today's Family Dashboard</h2><p id="today">Welcome home!</p></div>
+ <div class="daily-heading"><h2>☀️ Today's Dashboard</h2><p id="today">Welcome home!</p></div>
  <div class="daily-cards">
-  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Today's Weather</h3><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p></section>
-  <section class="family-calendar" id="family-calendar"><h3>📅 Today's Family Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
+  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Weather</h3><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p></section>
+  <section class="family-calendar" id="family-calendar"><h3>📅 Today's Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
  </div>
 </section>
 <p class="status device-status" id="device-status">Checking homebase access…</p>
@@ -453,12 +454,23 @@ auth.onAuthStateChanged(function(user){
  var temp=document.getElementById('weather-temp'),icon=document.getElementById('weather-icon'),desc=document.getElementById('weather-description'),range=document.getElementById('weather-range');
  var url='https://api.open-meteo.com/v1/forecast?latitude=39.7294&longitude=-104.8319&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=America%2FDenver&forecast_days=1';
  var labels={0:['☀️','Sunny'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Cloudy'],45:['🌫️','Foggy'],48:['🌫️','Foggy'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Drizzle'],61:['🌧️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['❄️','Snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Rain showers'],82:['🌧️','Heavy showers'],95:['⛈️','Thunderstorms'],96:['⛈️','Thunderstorms'],99:['⛈️','Thunderstorms']};
- fetch(url).then(function(r){if(!r.ok)throw new Error('weather');return r.json();}).then(function(d){
-  var c=d.current||{},daily=d.daily||{},code=labels[c.weather_code]||['🌤️','Today's forecast'];
-  if(typeof c.temperature_2m!=='number')throw new Error('temperature');
-  temp.textContent=Math.round(c.temperature_2m)+'°';icon.textContent=code[0];desc.textContent=code[1];
-  if(daily.temperature_2m_max&&daily.temperature_2m_min)range.textContent='High '+Math.round(daily.temperature_2m_max[0])+'° · Low '+Math.round(daily.temperature_2m_min[0])+'°';
- }).catch(function(){desc.textContent='Weather unavailable right now';});
+ /* XMLHttpRequest works on older iPad Safari versions that do not support fetch(). */
+ var request=new XMLHttpRequest();
+ request.open('GET',url,true);
+ request.timeout=12000;
+ request.onreadystatechange=function(){
+  if(request.readyState!==4)return;
+  if(request.status!==200){desc.textContent='Weather unavailable right now';return;}
+  try{
+   var d=JSON.parse(request.responseText),c=d.current||{},daily=d.daily||{},code=labels[c.weather_code]||['🌤️','Today’s forecast'];
+   if(typeof c.temperature_2m!=='number')throw new Error('temperature');
+   temp.textContent=Math.round(c.temperature_2m)+'°';
+   icon.textContent=code[0];desc.textContent=code[1];
+   if(daily.temperature_2m_max&&daily.temperature_2m_min)range.textContent='High '+Math.round(daily.temperature_2m_max[0])+'° · Low '+Math.round(daily.temperature_2m_min[0])+'°';
+  }catch(e){desc.textContent='Weather unavailable right now';}
+ };
+ request.onerror=request.ontimeout=function(){desc.textContent='Weather unavailable right now';};
+ try{request.send();}catch(e){desc.textContent='Weather unavailable right now';}
 })();
 </script>
 </body>
