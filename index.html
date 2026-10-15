@@ -416,7 +416,7 @@ function render(){
  root.textContent='';
  var today=denverDay(new Date());
  var visible=expanded?allEvents:allEvents.filter(function(e){return denverDay(e.start)===today||(e.end&&denverDay(e.start)<today&&denverDay(e.end)>=today);});
- status.textContent=visible.length?'':(expanded?'No upcoming events in the next 30 days.':'No events scheduled for today.');
+ status.textContent=visible.length?'':(expanded?'No upcoming events in the next 7 days.':'No events scheduled for today.');
  visible.forEach(function(e){
   var row=document.createElement('div');row.className='calendar-event';
   var date=document.createElement('div');date.className='calendar-date';
@@ -429,7 +429,7 @@ function render(){
  });
 }
 function show(snapshot){
- var today=denverDay(new Date());var limit=new Date();limit.setDate(limit.getDate()+31);
+ var today=denverDay(new Date());var limit=new Date();limit.setDate(limit.getDate()+7);
  allEvents=[];
  snapshot.forEach(function(doc){var x=doc.data(),start=dateOf(x.start),end=dateOf(x.end);
  if(start&&start<limit&&(end?denverDay(end)>=today:denverDay(start)>=today))allEvents.push({title:String(x.title||'Untitled event'),start:start,end:end,allDay:x.allDay===true});
