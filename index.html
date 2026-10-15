@@ -137,6 +137,18 @@ main{padding-top:7px}
 .picker span{margin-top:4px;font-size:25px}
 .picker small{margin-top:2px;font-size:13px}
 </style>
+<style>
+/* Two forecast columns inside a single weather card, compatible with older Safari. */
+.weather-split{display:-webkit-flex;display:flex;align-items:stretch;gap:0;min-height:115px}
+.weather-today{width:52%;min-width:0;padding-right:8px;box-sizing:border-box}
+.weather-extra{width:48%;min-width:0;box-sizing:border-box;border-top:0;border-left:1px solid #bdcfe6;margin:0;padding:5px 0 0 10px;font-size:12px;line-height:1.5}
+.weather-extra div+div{margin-top:12px}
+.weather-main{gap:4px}
+#weather-icon{font-size:27px}
+#weather-temp{font-size:34px}
+.weather-range,.weather-location{font-size:11px;line-height:1.4}
+@media(max-width:600px){.weather-today{width:50%;padding-right:5px}.weather-extra{width:50%;padding-left:7px;font-size:11px}.weather-extra div+div{margin-top:8px}#weather-icon{font-size:22px}#weather-temp{font-size:29px}}
+</style>
 </head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1></header>
@@ -145,7 +157,7 @@ main{padding-top:7px}
 <section class="daily-overview" id="daily-overview">
  <div class="daily-heading"><h2>☀️ Today's Dashboard</h2><p id="today">Welcome home!</p></div>
  <div class="daily-cards">
-  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Weather</h3><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p><div class="weather-extra" id="weather-extra" aria-live="polite"></div></section>
+  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Weather</h3><div class="weather-split"><div class="weather-today"><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p></div><div class="weather-extra" id="weather-extra" aria-live="polite"></div></div></section>
   <section class="family-calendar" id="family-calendar"><h3>📅 Today's Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
  </div>
 </section>
@@ -374,14 +386,14 @@ function errorText(err){return (err&&err.message)?err.message:'An unexpected err
 login.onclick=function(){status.textContent='Opening Google sign-in…';auth.signInWithPopup(provider).catch(function(err){if(err.code==='auth/popup-blocked'||err.code==='auth/operation-not-supported-in-this-environment'){auth.signInWithRedirect(provider).catch(function(e){status.textContent=errorText(e);});}else{status.textContent=errorText(err);}});};
 logout.onclick=function(){auth.signOut().catch(function(e){status.textContent=errorText(e);});};
 function clearList(){while(list.firstChild)list.removeChild(list.firstChild);}
-auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');info.textContent='';if(!user){deviceStatus.textContent='Kids can view chores; submissions require the registered homebase iPad.';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');return;}
+auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');info.textContent='';if(!user){deviceStatus.textContent='';deviceStatus.style.display='none';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');return;}
 if(user.isAnonymous){subscribeRewards(false);subscribeConfig(false);login.classList.add('hidden');logout.classList.add('hidden');status.textContent='🏡 Homebase iPad';
- if(user.uid===homeUid){window.hubCanSubmit=true;deviceStatus.textContent='✅ Authorized homebase iPad: chore submissions enabled.';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.textContent='Cannot load chores: '+e.message;});}
- else{deviceStatus.textContent='This device is not the authorized homebase iPad.';}
+ if(user.uid===homeUid){window.hubCanSubmit=true;deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.style.display='block';deviceStatus.textContent='Cannot load chores: '+e.message;});}
+ else{deviceStatus.textContent='';deviceStatus.style.display='none';}
  refreshControls();return;}
  login.classList.add('hidden');logout.classList.remove('hidden');status.textContent='Signed in: '+(user.email||'Google account');
 if(!user.emailVerified||parents.indexOf((user.email||'').toLowerCase())===-1){msg.textContent='This Google account is not authorized as a parent. Sign out and use an approved account.';return;}
-msg.textContent='Welcome! Both parents can manage groceries, chores, stars, and approvals.';shopUnsub=shopRequests.onSnapshot(showShopApprovals,function(e){document.getElementById('shop-approval-status').textContent='Cannot load reward requests: '+e.message;});subscribeRewards(true);subscribeConfig(true);area.classList.remove('hidden');renderRewards();deviceStatus.textContent='Parent mode: use the homebase iPad to submit chores.';requestsUnsub=requests.onSnapshot(showApprovals,function(e){document.getElementById('approval-status').textContent='Cannot load approvals: '+e.message;});
+msg.textContent='Welcome! Both parents can manage groceries, chores, stars, and approvals.';shopUnsub=shopRequests.onSnapshot(showShopApprovals,function(e){document.getElementById('shop-approval-status').textContent='Cannot load reward requests: '+e.message;});subscribeRewards(true);subscribeConfig(true);area.classList.remove('hidden');renderRewards();deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(showApprovals,function(e){document.getElementById('approval-status').textContent='Cannot load approvals: '+e.message;});
 unsubscribe=db.collection('family').doc('johnson').collection('groceries').orderBy('createdAt','asc').onSnapshot(function(snapshot){window.hubGrocerySnapshot=snapshot;if(window.hubDrawShopping)window.hubDrawShopping();},function(err){info.textContent='Cannot load groceries: '+errorText(err);});
 });
 auth.getRedirectResult().catch(function(err){status.textContent=errorText(err);});
