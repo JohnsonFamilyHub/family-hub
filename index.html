@@ -231,7 +231,7 @@ var status=document.getElementById('auth-status'),msg=document.getElementById('p
 if(!window.firebase){status.textContent='Firebase could not load. Check your internet connection.';login.disabled=true;return;}
 firebase.initializeApp(cfg);
 var auth=firebase.auth(),db=firebase.firestore(),provider=new firebase.auth.GoogleAuthProvider(),unsubscribe=null,requestsUnsub=null;
-var homeUid='NzfDaKcjWpWtTNIJHaP0GG5TRg32';
+var homeUid='GJprO8II11grgG9nffWdUeHE14K3';
 var requests=db.collection('family').doc('johnson').collection('choreRequests');
  var rewardRoot=db.collection('family').doc('johnson').collection('rewards');
  var rewardUnsubs=[],shopUnsub=null;
@@ -458,7 +458,7 @@ if(!window.firebase)return;
 var auth=firebase.auth(),db=firebase.firestore();
 var root=document.getElementById('calendar-events'),status=document.getElementById('calendar-status'),stop=null;
 var allowed=['veronicalillianjohnson@gmail.com','joshcooperjohnson@gmail.com'];
-var homeUid='NzfDaKcjWpWtTNIJHaP0GG5TRg32';
+var homeUid='GJprO8II11grgG9nffWdUeHE14K3';
 function dateOf(v){if(!v)return null;if(typeof v.toDate==='function')return v.toDate();if(typeof v.seconds==='number')return new Date(v.seconds*1000);var d=new Date(v);return isNaN(d.getTime())?null:d;}
 function denverDay(d){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Denver',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);}
 var expanded=false, allEvents=[];
