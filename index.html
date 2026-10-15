@@ -138,16 +138,17 @@ main{padding-top:7px}
 .picker small{margin-top:2px;font-size:13px}
 </style>
 <style>
-/* Two forecast columns inside a single weather card, compatible with older Safari. */
-.weather-split{display:-webkit-flex;display:flex;align-items:stretch;gap:0;min-height:115px}
-.weather-today{width:52%;min-width:0;padding-right:8px;box-sizing:border-box}
-.weather-extra{width:48%;min-width:0;box-sizing:border-box;border-top:0;border-left:1px solid #bdcfe6;margin:0;padding:5px 0 0 10px;font-size:12px;line-height:1.5}
-.weather-extra div+div{margin-top:12px}
-.weather-main{gap:4px}
-#weather-icon{font-size:27px}
-#weather-temp{font-size:34px}
-.weather-range,.weather-location{font-size:11px;line-height:1.4}
-@media(max-width:600px){.weather-today{width:50%;padding-right:5px}.weather-extra{width:50%;padding-left:7px;font-size:11px}.weather-extra div+div{margin-top:8px}#weather-icon{font-size:22px}#weather-temp{font-size:29px}}
+/* Two kid-friendly forecasts in one compact card. */
+.weather-split{display:-webkit-flex;display:flex;align-items:stretch;gap:0}
+.weather-today,.weather-extra{width:50%;min-width:0;box-sizing:border-box;text-align:center;padding:2px 7px}
+.weather-extra{border-left:1px solid #bdcfe6;margin:0;font-size:12px;line-height:1.25}
+.weather-day-label{font-family:Fredoka,Nunito,sans-serif;font-size:16px;font-weight:700;margin:0 0 3px}
+.weather-big-icon{display:block;font-size:48px;line-height:1.08;margin:2px 0}
+.weather-temperature{display:block;font-size:28px;font-weight:800;line-height:1.1}
+.weather-condition{font-weight:700;font-size:12px;margin:3px 0}
+.weather-range{font-size:11px;line-height:1.3;margin:3px 0}
+.weather-clothes{font-size:11px;font-weight:800;line-height:1.25;margin:6px 0 1px;color:#37527b}
+@media(max-width:600px){.weather-today,.weather-extra{padding-left:4px;padding-right:4px}.weather-big-icon{font-size:43px}.weather-temperature{font-size:25px}.weather-clothes{font-size:10px}}
 </style>
 </head>
 <body>
@@ -157,7 +158,10 @@ main{padding-top:7px}
 <section class="daily-overview" id="daily-overview">
  <div class="daily-heading"><h2>☀️ Today's Dashboard</h2><p id="today">Welcome home!</p></div>
  <div class="daily-cards">
-  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Weather</h3><div class="weather-split"><div class="weather-today"><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p></div><div class="weather-extra" id="weather-extra" aria-live="polite"></div></div></section>
+  <section class="weather-card" aria-label="Today and tomorrow weather"><h3>🌤️ Weather</h3><div class="weather-split">
+ <div class="weather-today"><p class="weather-day-label">Today</p><span class="weather-big-icon" id="weather-icon" aria-hidden="true">🌤️</span><strong class="weather-temperature" id="weather-temp">—°</strong><p class="weather-condition" id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-clothes" id="weather-clothes"></p></div>
+ <div class="weather-extra" id="weather-extra" aria-live="polite"><p class="weather-day-label">Tomorrow</p><span class="weather-big-icon" id="tomorrow-icon" aria-hidden="true">🌤️</span><strong class="weather-temperature" id="tomorrow-temp">—°</strong><p class="weather-condition" id="tomorrow-description">Loading…</p><p class="weather-range" id="tomorrow-range"></p><p class="weather-clothes" id="tomorrow-clothes"></p></div>
+ </div></section>
   <section class="family-calendar" id="family-calendar"><h3>📅 Today's Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
  </div>
 </section>
@@ -167,7 +171,7 @@ main{padding-top:7px}
 <section class="kid pink hidden" id="evie-panel"><h2><span aria-hidden="true" class="profile-emoji">🎀</span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="evie-stars">⭐ Stars: —</span><span class="stat" id="evie-savings">💰 Savings: —</span><span class="stat" id="evie-week">💵 This week: — / $15</span></div><div id="evie"></div><div class="shop" id="evie-shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="evie-shop-grid"></div><p class="shop-message" id="evie-shop-message"></p></div></section>
 </div>
 <section class="parent"><h2>🔒 Parent Area</h2><p id="parent-message">Sign in with an approved parent Google account to access shared family information.</p><div class="hidden" id="parent-content"><h3>🛒 Shared grocery list</h3><p>Add an item here, then check another parent's phone to confirm syncing.</p><form id="grocery-form"><input id="grocery-input" maxlength="100" placeholder="Add a grocery item" required=""/><button type="submit">Add</button></form><ul id="grocery-list"></ul><button id="create-shopping" type="button">Create shopping list from selected items</button><p class="status" id="grocery-status"></p><section class="shopping-area"><h3>🛍️ Shopping List by Store</h3><p class="note">Stores save automatically when you assign or change them. Tap the store to move an item.</p><div id="shopping-groups"></div><h4>Recently purchased</h4><p class="note">Shows purchases from the last 7 days. Older purchases are hidden, not deleted.</p><div class="history-actions"><button id="clear-purchased" type="button">Clear recently purchased</button></div><div id="shopping-purchased"></div><p class="status" id="shopping-status"></p></section><details class="hub-accordion parent-chores"><summary>⭐ Chores, Stars &amp; Rewards</summary><details class="hub-accordion nested"><summary>📝 Chore Approvals</summary><h3>📝 Chore approvals</h3><p class="status" id="approval-status">Loading…</p><div id="approval-list"></div></details><details class="hub-accordion nested"><summary>✏️ Manage Chores &amp; Stars</summary><section class="manager" id="chore-manager"><h3>✏️ Manage Chores &amp; Stars</h3><p class="manager-note">Edit schedules for both kids. Changes sync to the homebase iPad. Parent approval is required before rewards are credited.</p><p class="manager-message" id="manager-status">Loading schedules…</p><div class="manager-children" id="manager-choose-child"><button data-manager-kid="kieran" type="button">⭐ Kieran</button><button data-manager-kid="evie" type="button">🎀 Evie</button></div><div class="hidden" id="manager-choose-kind"><button class="secondary" id="manager-back-children" type="button">← Both kids</button><h4 id="manager-kid-heading"></h4><div class="manager-children"><button data-manager-kind="star" type="button">⭐ Star routines</button><button data-manager-kind="paid" type="button">💵 Paid chores</button></div></div><div class="hidden" id="manager-active"><button class="secondary" id="manager-back-kinds" type="button">← Categories</button><h4 id="manager-active-heading"></h4><div class="manager-summary" id="manager-summary"></div></div><div id="manager-list"></div><button id="manager-add" type="button">+ Add chore or routine</button><div class="manager-form hidden" id="manager-editor"><h4 id="manager-editor-title">Edit task</h4><form id="manager-form"><label for="manager-child">Child</label><select id="manager-child"><option value="kieran">Kieran</option><option value="evie">Evie</option></select><label for="manager-kind">Type</label><select id="manager-kind"><option value="paid">Paid chore</option><option value="star">Star routine</option></select><label for="manager-name">Name</label><input id="manager-name" maxlength="100" required=""/><label for="manager-icon">Emoji (optional)</label><input id="manager-icon" maxlength="8" placeholder="⭐"/><label for="manager-steps">Checklist steps (one per line; for star routines)</label><textarea id="manager-steps" maxlength="1500" placeholder="Brush teeth
-Get dressed"></textarea><label for="manager-amount">Value ($ for paid chores, stars for routines)</label><input id="manager-amount" max="15" min="0" required="" step="0.25" type="number" value="0.75"/><label>Scheduled days</label><div class="days-grid" id="manager-days"></div><p class="manager-note">Changes to amounts apply to future submissions, not previously approved work. The $15 weekly paid-earnings cap is enforced at approval.</p><button id="manager-save" type="submit">Save changes</button><button class="secondary" id="manager-cancel" type="button">Cancel</button></form></div></section></details><details class="hub-accordion nested"><summary>🎁 Reward Requests</summary><section class="manager" id="shop-approvals"><h3>🎁 Reward requests</h3><p class="note">Approve a reward to deduct stars. Send back a request without deducting any stars.</p><p class="status" id="shop-approval-status">Loading…</p><div id="shop-approval-list"></div></section></details><details class="hub-accordion nested"><summary>💰 Allowance &amp; Stars</summary><section class="manager" id="rewards-manager"><h3>💰 Allowance &amp; Stars</h3><p class="note">Balances carry over. Only parents can record spending, star redemptions, and adjustments.</p><div class="status" id="rewards-parent-status">Loading balances…</div><div id="rewards-parent-list"></div><form class="manager-form" id="rewards-form"><label for="reward-child">Child</label><select id="reward-child"><option value="kieran">Kieran</option><option value="evie">Evie</option></select><label for="reward-action">Action</label><select id="reward-action"><option value="spend">Record purchase (subtract savings)</option><option value="redeem">Redeem stars</option><option value="money-adjust">Adjust savings (+ or −)</option><option value="stars-adjust">Adjust stars (+ or −)</option></select><label for="reward-description">Description</label><input id="reward-description" maxlength="120" placeholder="e.g. Pokémon cards" required=""/><label for="reward-amount">Amount (dollars or stars)</label><input id="reward-amount" min="0.01" required="" step="0.01" type="number"/><button id="reward-submit" type="submit">Save transaction</button><p class="status" id="reward-feedback"></p></form></section></details><details class="hub-accordion nested"><summary>🧾 Recent Transactions</summary><h4>Recent transactions</h4><div id="reward-history"></div></details></details><h3>Coming next</h3><p>Calendar and household tasks.</p></div><p class="note">Balances are managed by approved parent accounts. No separate parent PIN lock is implemented.</p></section>
+Get dressed"></textarea><label for="manager-amount">Value ($ for paid chores, stars for routines)</label><input id="manager-amount" max="15" min="0" required="" step="0.25" type="number" value="0.75"/><label>Scheduled days</label><div class="days-grid" id="manager-days"></div><p class="manager-note">Changes to amounts apply to future submissions, not previously approved work. The $15 weekly paid-earnings cap is enforced at approval.</p><button id="manager-save" type="submit">Save changes</button><button class="secondary" id="manager-cancel" type="button">Cancel</button></form></div></section></details><details class="hub-accordion nested"><summary>🎁 Reward Requests</summary><section class="manager" id="shop-approvals"><h3>🎁 Reward requests</h3><p class="note">Approve a reward to deduct stars. Send back a request without deducting any stars.</p><p class="status" id="shop-approval-status">Loading…</p><div id="shop-approval-list"></div></section></details><details class="hub-accordion nested"><summary>💰 Allowance &amp; Stars</summary><section class="manager" id="rewards-manager"><h3>💰 Allowance &amp; Stars</h3><p class="note">Balances carry over. Only parents can record spending, star redemptions, and adjustments.</p><div class="status" id="rewards-parent-status">Loading balances…</div><div id="rewards-parent-list"></div><form class="manager-form" id="rewards-form"><label for="reward-child">Child</label><select id="reward-child"><option value="kieran">Kieran</option><option value="evie">Evie</option></select><label for="reward-action">Action</label><select id="reward-action"><option value="spend">Record purchase (subtract savings)</option><option value="redeem">Redeem stars</option><option value="money-adjust">Adjust savings (+ or −)</option><option value="stars-adjust">Adjust stars (+ or −)</option></select><label for="reward-description">Description</label><input id="reward-description" maxlength="120" placeholder="e.g. Pokémon cards" required=""/><label for="reward-amount">Amount (dollars or stars)</label><input id="reward-amount" min="0.01" required="" step="0.01" type="number"/><button id="reward-submit" type="submit">Save transaction</button><p class="status" id="reward-feedback"></p></form></section></details><details class="hub-accordion nested"><summary>🧾 Recent Transactions</summary><h4>Recent transactions</h4><div id="reward-history"></div></details></details><h3>Coming next</h3><p>Calendar and household tasks.</p></div></section>
 <div class="footer">Made for the Johnson family ❤️</div>
 </main>
 <script>
@@ -490,35 +494,38 @@ auth.onAuthStateChanged(function(user){
 </script>
 
 <script>
-/* Weather uses Open-Meteo's public forecast API. Approximate Aurora city center, not device location. */
+/* Open-Meteo weather, older Safari-compatible XMLHttpRequest. */
 (function(){
- var temp=document.getElementById('weather-temp'),icon=document.getElementById('weather-icon'),desc=document.getElementById('weather-description'),range=document.getElementById('weather-range'),extra=document.getElementById('weather-extra');
- var url='https://api.open-meteo.com/v1/forecast?latitude=39.7294&longitude=-104.8319&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=fahrenheit&timezone=America%2FDenver&forecast_days=2';
- var labels={0:['☀️','Sunny'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Cloudy'],45:['🌫️','Foggy'],48:['🌫️','Foggy'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Drizzle'],61:['🌧️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['❄️','Snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Rain showers'],82:['🌧️','Heavy showers'],95:['⛈️','Thunderstorms'],96:['⛈️','Thunderstorms'],99:['⛈️','Thunderstorms']};
- /* XMLHttpRequest works on older iPad Safari versions that do not support fetch(). */
- var request=new XMLHttpRequest();
- request.open('GET',url,true);
- request.timeout=12000;
+ function byId(id){return document.getElementById(id);}
+ var url='https://api.open-meteo.com/v1/forecast?latitude=39.7294&longitude=-104.8319&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&temperature_unit=fahrenheit&timezone=America%2FDenver&forecast_days=2';
+ var labels={0:['☀️','Sunny'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Cloudy'],45:['🌫️','Foggy'],48:['🌫️','Foggy'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Drizzle'],61:['🌧️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['❄️','Snow'],75:['❄️','Heavy snow'],77:['❄️','Snow'],80:['🌦️','Rain showers'],81:['🌧️','Rain showers'],82:['🌧️','Heavy showers'],85:['🌨️','Snow showers'],86:['❄️','Snow showers'],95:['⛈️','Thunderstorms'],96:['⛈️','Thunderstorms'],99:['⛈️','Thunderstorms']};
+ function clothing(low,high,code){
+  if(code===71||code===73||code===75||code===77||code===85||code===86)return '🥾 Wear snow boots!';
+  if(high<=32||low<=20)return '🧥 Wear a warm coat!';
+  if(high<=55||low<=38)return '🧥 Bring a jacket!';
+  if(code===51||code===53||code===55||code===61||code===63||code===65||code===80||code===81||code===82||code>=95)return '🌂 Bring a raincoat!';
+  if(high>=85)return '🧢 Wear a sun hat!';
+  return '👟 Dress for the day!';
+ }
+ function fail(){byId('weather-description').textContent='Weather unavailable';byId('tomorrow-description').textContent='Weather unavailable';}
+ var request=new XMLHttpRequest();request.open('GET',url,true);request.timeout=12000;
  request.onreadystatechange=function(){
   if(request.readyState!==4)return;
-  if(request.status!==200){desc.textContent='Weather unavailable right now';return;}
+  if(request.status!==200){fail();return;}
   try{
-   var d=JSON.parse(request.responseText),c=d.current||{},daily=d.daily||{},code=labels[c.weather_code]||['🌤️','Today’s forecast'];
-   if(typeof c.temperature_2m!=='number')throw new Error('temperature');
-   temp.textContent=Math.round(c.temperature_2m)+'°';
-   icon.textContent=code[0];desc.textContent=code[1];
-   if(daily.temperature_2m_max&&daily.temperature_2m_min)range.textContent='High '+Math.round(daily.temperature_2m_max[0])+'° · Low '+Math.round(daily.temperature_2m_min[0])+'°';
-   var info=[];
-   if(daily.precipitation_probability_max&&typeof daily.precipitation_probability_max[0]==='number')info.push('☔ Rain/snow chance: '+Math.round(daily.precipitation_probability_max[0])+'%');
-   if(daily.temperature_2m_max&&daily.temperature_2m_max.length>1&&daily.temperature_2m_min&&daily.temperature_2m_min.length>1){
-    var tomorrow=labels[daily.weather_code&&daily.weather_code[1]]||['🌤️','Forecast'];
-    info.push(tomorrow[0]+' Tomorrow: '+Math.round(daily.temperature_2m_max[1])+'° / '+Math.round(daily.temperature_2m_min[1])+'°');
-   }
-   for(var i=0;i<info.length;i++){var line=document.createElement('div');line.textContent=info[i];extra.appendChild(line);}
-  }catch(e){desc.textContent='Weather unavailable right now';}
+   var data=JSON.parse(request.responseText),c=data.current||{},d=data.daily||{};
+   if(typeof c.temperature_2m!=='number'||!d.temperature_2m_max||d.temperature_2m_max.length<2||!d.temperature_2m_min||d.temperature_2m_min.length<2)throw Error('Missing weather');
+   var now=labels[c.weather_code]||['🌤️','Weather'];var tomorrow=labels[d.weather_code&&d.weather_code[1]]||['🌤️','Weather'];
+   byId('weather-icon').textContent=now[0];byId('weather-temp').textContent=Math.round(c.temperature_2m)+'°';byId('weather-description').textContent=now[1];
+   byId('weather-range').textContent='High '+Math.round(d.temperature_2m_max[0])+'° · Low '+Math.round(d.temperature_2m_min[0])+'°';
+   byId('weather-clothes').textContent=clothing(d.temperature_2m_min[0],d.temperature_2m_max[0],d.weather_code&&d.weather_code[0]);
+   byId('tomorrow-icon').textContent=tomorrow[0];byId('tomorrow-temp').textContent=Math.round(d.temperature_2m_max[1])+'°';byId('tomorrow-description').textContent=tomorrow[1];
+   byId('tomorrow-range').textContent='Low '+Math.round(d.temperature_2m_min[1])+'°';
+   byId('tomorrow-clothes').textContent=clothing(d.temperature_2m_min[1],d.temperature_2m_max[1],d.weather_code&&d.weather_code[1]);
+  }catch(e){fail();}
  };
- request.onerror=request.ontimeout=function(){desc.textContent='Weather unavailable right now';};
- try{request.send();}catch(e){desc.textContent='Weather unavailable right now';}
+ request.onerror=request.ontimeout=fail;
+ try{request.send();}catch(e){fail();}
 })();
 </script>
 </body>
