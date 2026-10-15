@@ -153,7 +153,7 @@ main{padding-top:7px}
 </head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1></header>
-<div class="authbar"><span id="auth-status">Parent sign-in not connected</span><button id="login" type="button">Parent Google sign-in</button><button class="hidden" id="logout" type="button">Sign out</button></div>
+<div class="authbar"><span id="auth-status">Parent sign-in not connected</span><button id="login" type="button">Parent Google sign-in</button><button class="hidden" id="logout" type="button">Sign out</button><button class="hidden" id="reconnect-homebase" type="button">Reconnect Homebase iPad</button></div>
 <main>
 <section class="daily-overview" id="daily-overview">
  <div class="daily-heading"><h2>☀️ Today's Dashboard</h2><p id="today">Welcome home!</p></div>
@@ -389,13 +389,20 @@ function money(cents){return '$'+(Number(cents||0)/100).toFixed(2);}
 function errorText(err){return (err&&err.message)?err.message:'An unexpected error occurred.';}
 login.onclick=function(){status.textContent='Opening Google sign-in…';auth.signInWithPopup(provider).catch(function(err){if(err.code==='auth/popup-blocked'||err.code==='auth/operation-not-supported-in-this-environment'){auth.signInWithRedirect(provider).catch(function(e){status.textContent=errorText(e);});}else{status.textContent=errorText(err);}});};
 logout.onclick=function(){auth.signOut().catch(function(e){status.textContent=errorText(e);});};
+var reconnect=document.getElementById('reconnect-homebase');
+reconnect.onclick=function(){
+ reconnect.disabled=true;status.textContent='Connecting this iPad…';
+ auth.signInAnonymously().then(function(result){
+  status.textContent='New iPad ID: '+result.user.uid+' — needs parent authorization';
+ }).catch(function(err){status.textContent='Could not connect: '+errorText(err);}).then(function(){reconnect.disabled=false;});
+};
 function clearList(){while(list.firstChild)list.removeChild(list.firstChild);}
-auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');info.textContent='';if(!user){deviceStatus.textContent='';deviceStatus.style.display='none';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');return;}
-if(user.isAnonymous){subscribeRewards(false);subscribeConfig(false);login.classList.add('hidden');logout.classList.add('hidden');status.textContent='🏡 Homebase iPad';
+auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');info.textContent='';if(!user){deviceStatus.textContent='';deviceStatus.style.display='none';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');reconnect.classList.remove('hidden');return;}
+if(user.isAnonymous){login.classList.add('hidden');logout.classList.add('hidden');reconnect.classList.add('hidden');status.textContent=user.uid===homeUid?'🏡 Homebase iPad':'New iPad ID: '+user.uid+' — needs parent authorization';if(user.uid===homeUid){subscribeRewards(false);subscribeConfig(false);}
  if(user.uid===homeUid){window.hubCanSubmit=true;deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.style.display='block';deviceStatus.textContent='Cannot load chores: '+e.message;});}
  else{deviceStatus.textContent='';deviceStatus.style.display='none';}
  refreshControls();return;}
- login.classList.add('hidden');logout.classList.remove('hidden');status.textContent='Signed in: '+(user.email||'Google account');
+ reconnect.classList.add('hidden');login.classList.add('hidden');logout.classList.remove('hidden');status.textContent='Signed in: '+(user.email||'Google account');
 if(!user.emailVerified||parents.indexOf((user.email||'').toLowerCase())===-1){msg.textContent='This Google account is not authorized as a parent. Sign out and use an approved account.';return;}
 msg.textContent='Welcome! Both parents can manage groceries, chores, stars, and approvals.';shopUnsub=shopRequests.onSnapshot(showShopApprovals,function(e){document.getElementById('shop-approval-status').textContent='Cannot load reward requests: '+e.message;});subscribeRewards(true);subscribeConfig(true);area.classList.remove('hidden');renderRewards();deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(showApprovals,function(e){document.getElementById('approval-status').textContent='Cannot load approvals: '+e.message;});
 unsubscribe=db.collection('family').doc('johnson').collection('groceries').orderBy('createdAt','asc').onSnapshot(function(snapshot){window.hubGrocerySnapshot=snapshot;if(window.hubDrawShopping)window.hubDrawShopping();},function(err){info.textContent='Cannot load groceries: '+errorText(err);});
