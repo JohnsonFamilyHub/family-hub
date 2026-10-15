@@ -30,6 +30,14 @@
 .shop-tier-buttons button.active{background:#2457a7;color:#fff;border-color:#2457a7}
 .shop-grid{grid-template-columns:1fr}.shop-item{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.shop-item strong{flex:1;min-width:155px}.shop-item small{width:100%;order:3;margin:0}.shop-item button{margin-left:auto}
 </style>
+<style>
+.family-calendar{background:#fff;border-radius:18px;padding:19px;margin:0 0 18px;box-shadow:0 4px 18px #1b31500a}
+.family-calendar h2{margin:0 0 7px;font-size:21px}.calendar-note{font-size:13px;color:#627087;margin:0 0 14px}
+.calendar-event{display:flex;gap:13px;align-items:flex-start;border-top:1px solid #e8edf4;padding:13px 0}
+.calendar-date{min-width:67px;border-radius:11px;background:#e5f1ff;padding:9px 5px;text-align:center;color:#2457a7;font-weight:800}
+.calendar-date small{display:block;font-size:12px;font-weight:600}.calendar-event-info{flex:1;min-width:0}
+.calendar-event-info strong{display:block;font-size:16px;overflow-wrap:anywhere}.calendar-event-info span{display:block;color:#627087;font-size:13px;margin-top:4px}
+</style>
 </head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1><p>Our family's happy place</p></header>
@@ -37,6 +45,12 @@
 <main>
 <section class="welcome"><h2>☀️ Today's Family Dashboard</h2><p id="today">Welcome home!</p></section>
 <p class="preview-label"><strong>Chore approvals:</strong> The registered homebase iPad sends completed chores for parent review. Parent approval awards money or stars, up to $15 of paid chores per child each week.</p><p id="device-status" class="status">Checking homebase access…</p>
+<section class="family-calendar" id="family-calendar">
+<h2>📅 Family Calendar</h2>
+<p class="calendar-note">Upcoming events from our shared Google Calendar, automatically synced to Family Hub.</p>
+<p class="status" id="calendar-status">Sign in on an approved device to see family events.</p>
+<div id="calendar-events"></div>
+</section>
 <section id="kid-picker" class="kid-picker"><h2>Whose dashboard?</h2><p>Tap your name to see today's chores and rewards.</p><div class="picker-buttons"><button type="button" class="picker blue" data-kid="kieran"><span class="profile-emoji" aria-hidden="true">⭐</span><span>Kieran</span><small>My chores & rewards</small></button><button type="button" class="picker pink" data-kid="evie"><span class="profile-emoji" aria-hidden="true">🎀</span><span>Evie</span><small>My chores & rewards</small></button></div></section><div id="dashboard-navigation" class="hidden"><button type="button" id="back-home">← Back to Home</button></div><div class="kids hidden" id="kid-dashboards">
 <section class="kid blue hidden" id="kieran-panel"><h2><span class="profile-emoji" aria-hidden="true">⭐</span> Kieran</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="kieran-stars">⭐ Stars: —</span><span class="stat" id="kieran-savings">💰 Savings: —</span><span class="stat" id="kieran-week">💵 This week: — / $15</span></div><div id="kieran"></div><div id="kieran-shop" class="shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="kieran-shop-grid"></div><p class="shop-message" id="kieran-shop-message"></p></div></section>
 <section class="kid pink hidden" id="evie-panel"><h2><span class="profile-emoji" aria-hidden="true">🎀</span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="evie-stars">⭐ Stars: —</span><span class="stat" id="evie-savings">💰 Savings: —</span><span class="stat" id="evie-week">💵 This week: — / $15</span></div><div id="evie"></div><div id="evie-shop" class="shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="evie-shop-grid"></div><p class="shop-message" id="evie-shop-message"></p></div></section>
@@ -312,6 +326,45 @@ var picker=document.getElementById('kid-picker'),nav=document.getElementById('da
 function openKid(id){picker.classList.add('hidden');nav.classList.remove('hidden');dashboards.classList.remove('hidden');document.getElementById('kieran-panel').classList.toggle('hidden',id!=='kieran');document.getElementById('evie-panel').classList.toggle('hidden',id!=='evie');window.scrollTo(0,0);}
 var buttons=document.querySelectorAll('[data-kid]');for(var i=0;i<buttons.length;i++){buttons[i].onclick=function(){openKid(this.getAttribute('data-kid'));};}
 document.getElementById('back-home').onclick=function(){dashboards.classList.add('hidden');nav.classList.add('hidden');picker.classList.remove('hidden');document.getElementById('kieran-panel').classList.add('hidden');document.getElementById('evie-panel').classList.add('hidden');window.scrollTo(0,0);};
+})();
+</script>
+<script>
+(function(){
+'use strict';
+if(!window.firebase)return;
+var auth=firebase.auth(),db=firebase.firestore();
+var root=document.getElementById('calendar-events'),status=document.getElementById('calendar-status'),stop=null;
+var allowed=['veronicalillianjohnson@gmail.com','joshcooperjohnson@gmail.com'];
+var homeUid='NzfDaKcjWpWtTNIJHaP0GG5TRg32';
+function dateOf(v){if(!v)return null;if(typeof v.toDate==='function')return v.toDate();if(typeof v.seconds==='number')return new Date(v.seconds*1000);var d=new Date(v);return isNaN(d.getTime())?null:d;}
+function show(snapshot){
+ var now=new Date();now.setHours(0,0,0,0);
+ var limit=new Date(now);limit.setDate(limit.getDate()+30);
+ var events=[];
+ snapshot.forEach(function(doc){var x=doc.data(),start=dateOf(x.start),end=dateOf(x.end);
+ if(start&&start<limit&&(end||start)>=now)events.push({title:String(x.title||'Untitled event'),start:start,end:end,allDay:x.allDay===true});
+ });
+ events.sort(function(a,b){return a.start-b.start;});root.textContent='';
+ status.textContent=events.length?events.length+' upcoming event'+(events.length===1?'':'s')+' in the next 30 days.':'No upcoming events in the next 30 days.';
+ events.forEach(function(e){
+ var row=document.createElement('div');row.className='calendar-event';
+ var date=document.createElement('div');date.className='calendar-date';date.textContent=e.start.toLocaleDateString('en-US',{day:'numeric',timeZone:'America/Denver'});
+ var month=document.createElement('small');month.textContent=e.start.toLocaleDateString('en-US',{month:'short',weekday:'short',timeZone:'America/Denver'});date.appendChild(month);
+ var detail=document.createElement('div');detail.className='calendar-event-info';
+ var name=document.createElement('strong');name.textContent=e.title;detail.appendChild(name);
+ var time=document.createElement('span');var opts={hour:'numeric',minute:'2-digit',timeZone:'America/Denver'};
+ time.textContent=e.allDay?'All day':e.start.toLocaleTimeString('en-US',opts)+(e.end?' – '+e.end.toLocaleTimeString('en-US',opts):'');
+ detail.appendChild(time);row.appendChild(date);row.appendChild(detail);root.appendChild(row);
+ });
+}
+auth.onAuthStateChanged(function(user){
+ if(stop){stop();stop=null;}root.textContent='';
+ var parent=user&&!user.isAnonymous&&user.emailVerified&&allowed.indexOf((user.email||'').toLowerCase())!==-1;
+ var home=user&&user.isAnonymous&&user.uid===homeUid;
+ if(!parent&&!home){status.textContent='Sign in on an approved device to see family events.';return;}
+ status.textContent='Loading family calendar…';
+ stop=db.collection('family').doc('johnson').collection('calendarEvents').onSnapshot(show,function(e){status.textContent='Could not load calendar: '+e.message;});
+});
 })();
 </script>
 </body>
