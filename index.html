@@ -83,19 +83,43 @@ header p{color:#60516f}
 .hub-accordion.nested>summary{background:#fbf7fd}
 @media(max-width:500px){.calendar-event{flex-direction:row;align-items:center;gap:10px}.calendar-date{min-width:73px;width:73px}}
 </style>
+<style>
+/* Compact weather + calendar dashboard */
+.daily-overview{margin-bottom:16px}
+.daily-heading{padding:6px 4px 12px;text-align:center}
+.daily-heading h2{margin:0 0 4px;font-size:clamp(21px,3vw,28px)}
+.daily-heading p{margin:0;color:#5e5471;font-size:14px}
+.daily-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:14px;align-items:start}
+.weather-card,.daily-cards .family-calendar{border-radius:22px;padding:16px;min-width:0;box-sizing:border-box;box-shadow:0 7px 20px #3b28551c;border:1px solid #ffffffbd;margin:0}
+.weather-card{background:#e3eefb;color:#29204f;min-height:185px}
+.daily-cards .family-calendar{background:#fce8f1;min-height:185px}
+.weather-card h3,.daily-cards .family-calendar h3{font-size:clamp(16px,2.4vw,21px);margin:0 0 12px;line-height:1.2}
+.weather-main{display:flex;align-items:center;gap:10px}
+#weather-icon{font-size:clamp(28px,5vw,46px)}
+#weather-temp{font-size:clamp(30px,5vw,48px);line-height:1.1}
+#weather-description{margin:8px 0 4px;font-weight:700}
+.weather-range,.weather-location{font-size:13px;color:#5b6684;margin:5px 0}
+.daily-cards .calendar-event{padding:9px 0;gap:9px}
+.daily-cards .calendar-date{min-width:54px;width:54px;min-height:51px;padding:5px 3px}
+.daily-cards .calendar-event-info strong{font-size:14px}
+.daily-cards .calendar-event-info span{font-size:12px}
+.daily-cards .calendar-toggle{width:100%;font-size:14px;padding:11px 8px;margin-top:9px}
+.device-status{font-size:12px;text-align:center;margin:5px 0 12px;color:#716980}
+@media(max-width:500px){.daily-cards{gap:8px;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}.weather-card,.daily-cards .family-calendar{padding:11px;border-radius:16px}.weather-card h3,.daily-cards .family-calendar h3{font-size:15px}.daily-cards .calendar-date{min-width:43px;width:43px}.daily-cards .calendar-event-info strong{font-size:12px}.daily-cards .calendar-event-info span{font-size:11px}.weather-range,.weather-location{font-size:11px}}
+</style>
 </head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1><p>Our family's happy place</p></header>
 <div class="authbar"><span id="auth-status">Parent sign-in not connected</span><button id="login" type="button">Parent Google sign-in</button><button class="hidden" id="logout" type="button">Sign out</button></div>
 <main>
-<section class="welcome"><h2>☀️ Today's Family Dashboard</h2><p id="today">Welcome home!</p></section>
-<p class="preview-label"><strong>Chore approvals:</strong> The registered homebase iPad sends completed chores for parent review. Parent approval awards money or stars, up to $15 of paid chores per child each week.</p><p class="status" id="device-status">Checking homebase access…</p>
-<section class="family-calendar" id="family-calendar">
-<h2>📅 Today’s Family Events</h2>
-
-<p class="status" id="calendar-status">Sign in on an approved device to see family events.</p>
-<div id="calendar-events"></div>
-<button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
+<section class="daily-overview" id="daily-overview">
+ <div class="daily-heading"><h2>☀️ Today's Family Dashboard</h2><p id="today">Welcome home!</p></div>
+ <div class="daily-cards">
+  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Today's Weather</h3><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p></section>
+  <section class="family-calendar" id="family-calendar"><h3>📅 Today's Family Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
+ </div>
+</section>
+<p class="status device-status" id="device-status">Checking homebase access…</p>
 <section class="kid-picker" id="kid-picker"><h2>Whose dashboard?</h2><p>Tap your name to see today's chores and rewards.</p><div class="picker-buttons"><button class="picker blue" data-kid="kieran" type="button"><span aria-hidden="true" class="profile-emoji">⭐</span><span>Kieran</span><small>My chores &amp; rewards</small></button><button class="picker pink" data-kid="evie" type="button"><span aria-hidden="true" class="profile-emoji">🎀</span><span>Evie</span><small>My chores &amp; rewards</small></button></div></section><div class="hidden" id="dashboard-navigation"><button id="back-home" type="button">← Back to Home</button></div><div class="kids hidden" id="kid-dashboards">
 <section class="kid blue hidden" id="kieran-panel"><h2><span aria-hidden="true" class="profile-emoji">⭐</span> Kieran</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="kieran-stars">⭐ Stars: —</span><span class="stat" id="kieran-savings">💰 Savings: —</span><span class="stat" id="kieran-week">💵 This week: — / $15</span></div><div id="kieran"></div><div class="shop" id="kieran-shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="kieran-shop-grid"></div><p class="shop-message" id="kieran-shop-message"></p></div></section>
 <section class="kid pink hidden" id="evie-panel"><h2><span aria-hidden="true" class="profile-emoji">🎀</span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="evie-stars">⭐ Stars: —</span><span class="stat" id="evie-savings">💰 Savings: —</span><span class="stat" id="evie-week">💵 This week: — / $15</span></div><div id="evie"></div><div class="shop" id="evie-shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="evie-shop-grid"></div><p class="shop-message" id="evie-shop-message"></p></div></section>
@@ -420,6 +444,21 @@ auth.onAuthStateChanged(function(user){
  status.textContent='Loading family calendar…';
  stop=db.collection('family').doc('johnson').collection('calendarEvents').onSnapshot(show,function(e){status.textContent='Could not load calendar: '+e.message;});
 });
+})();
+</script>
+
+<script>
+/* Weather uses Open-Meteo's public forecast API. Approximate Aurora city center, not device location. */
+(function(){
+ var temp=document.getElementById('weather-temp'),icon=document.getElementById('weather-icon'),desc=document.getElementById('weather-description'),range=document.getElementById('weather-range');
+ var url='https://api.open-meteo.com/v1/forecast?latitude=39.7294&longitude=-104.8319&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=America%2FDenver&forecast_days=1';
+ var labels={0:['☀️','Sunny'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Cloudy'],45:['🌫️','Foggy'],48:['🌫️','Foggy'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Drizzle'],61:['🌧️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['❄️','Snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Rain showers'],82:['🌧️','Heavy showers'],95:['⛈️','Thunderstorms'],96:['⛈️','Thunderstorms'],99:['⛈️','Thunderstorms']};
+ fetch(url).then(function(r){if(!r.ok)throw new Error('weather');return r.json();}).then(function(d){
+  var c=d.current||{},daily=d.daily||{},code=labels[c.weather_code]||['🌤️','Today's forecast'];
+  if(typeof c.temperature_2m!=='number')throw new Error('temperature');
+  temp.textContent=Math.round(c.temperature_2m)+'°';icon.textContent=code[0];desc.textContent=code[1];
+  if(daily.temperature_2m_max&&daily.temperature_2m_min)range.textContent='High '+Math.round(daily.temperature_2m_max[0])+'° · Low '+Math.round(daily.temperature_2m_min[0])+'°';
+ }).catch(function(){desc.textContent='Weather unavailable right now';});
 })();
 </script>
 </body>
