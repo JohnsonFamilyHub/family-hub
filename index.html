@@ -89,7 +89,7 @@ header p{color:#60516f}
 .daily-overview{margin-bottom:16px}
 .daily-heading{padding:6px 4px 12px;text-align:center}
 .daily-heading h2{margin:0 0 4px;font-size:clamp(21px,3vw,28px)}
-.daily-heading p{margin:0;color:#5e5471;font-size:14px}
+.daily-heading p{margin:0;color:#433653;font-size:15px;font-weight:800;font-family:'Nunito',sans-serif}
 .daily-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:12px;align-items:start}
 .weather-card,.daily-cards .family-calendar{border-radius:22px;padding:16px;min-width:0;box-sizing:border-box;box-shadow:0 7px 20px #3b28551c;border:1px solid #ffffffbd;margin:0}
 .weather-card{background:#e3eefb;color:#29204f;min-height:0}
@@ -100,6 +100,8 @@ header p{color:#60516f}
 #weather-temp{font-size:clamp(30px,5vw,48px);line-height:1.1}
 #weather-description{margin:8px 0 4px;font-weight:700}
 .weather-range,.weather-location{font-size:13px;color:#5b6684;margin:5px 0}
+.weather-extra{margin-top:8px;padding-top:7px;border-top:1px solid #bdcfe6;font-size:13px;color:#374768;font-weight:700;line-height:1.45}
+.weather-extra div+div{margin-top:3px}
 .daily-cards .calendar-event{padding:9px 0;gap:9px}
 .daily-cards .calendar-date{min-width:54px;width:54px;min-height:51px;padding:5px 3px}
 .daily-cards .calendar-event-info strong{font-size:14px}
@@ -143,7 +145,7 @@ main{padding-top:7px}
 <section class="daily-overview" id="daily-overview">
  <div class="daily-heading"><h2>☀️ Today's Dashboard</h2><p id="today">Welcome home!</p></div>
  <div class="daily-cards">
-  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Weather</h3><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p></section>
+  <section class="weather-card" aria-label="Today's weather"><h3>🌤️ Weather</h3><div class="weather-main"><span id="weather-icon" aria-hidden="true">🌤️</span><strong id="weather-temp">—°</strong></div><p id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-location">Aurora, CO</p><div class="weather-extra" id="weather-extra" aria-live="polite"></div></section>
   <section class="family-calendar" id="family-calendar"><h3>📅 Today's Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
  </div>
 </section>
@@ -478,8 +480,8 @@ auth.onAuthStateChanged(function(user){
 <script>
 /* Weather uses Open-Meteo's public forecast API. Approximate Aurora city center, not device location. */
 (function(){
- var temp=document.getElementById('weather-temp'),icon=document.getElementById('weather-icon'),desc=document.getElementById('weather-description'),range=document.getElementById('weather-range');
- var url='https://api.open-meteo.com/v1/forecast?latitude=39.7294&longitude=-104.8319&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=America%2FDenver&forecast_days=1';
+ var temp=document.getElementById('weather-temp'),icon=document.getElementById('weather-icon'),desc=document.getElementById('weather-description'),range=document.getElementById('weather-range'),extra=document.getElementById('weather-extra');
+ var url='https://api.open-meteo.com/v1/forecast?latitude=39.7294&longitude=-104.8319&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=fahrenheit&timezone=America%2FDenver&forecast_days=2';
  var labels={0:['☀️','Sunny'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Cloudy'],45:['🌫️','Foggy'],48:['🌫️','Foggy'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Drizzle'],61:['🌧️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['❄️','Snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Rain showers'],82:['🌧️','Heavy showers'],95:['⛈️','Thunderstorms'],96:['⛈️','Thunderstorms'],99:['⛈️','Thunderstorms']};
  /* XMLHttpRequest works on older iPad Safari versions that do not support fetch(). */
  var request=new XMLHttpRequest();
@@ -494,6 +496,13 @@ auth.onAuthStateChanged(function(user){
    temp.textContent=Math.round(c.temperature_2m)+'°';
    icon.textContent=code[0];desc.textContent=code[1];
    if(daily.temperature_2m_max&&daily.temperature_2m_min)range.textContent='High '+Math.round(daily.temperature_2m_max[0])+'° · Low '+Math.round(daily.temperature_2m_min[0])+'°';
+   var info=[];
+   if(daily.precipitation_probability_max&&typeof daily.precipitation_probability_max[0]==='number')info.push('☔ Rain/snow chance: '+Math.round(daily.precipitation_probability_max[0])+'%');
+   if(daily.temperature_2m_max&&daily.temperature_2m_max.length>1&&daily.temperature_2m_min&&daily.temperature_2m_min.length>1){
+    var tomorrow=labels[daily.weather_code&&daily.weather_code[1]]||['🌤️','Forecast'];
+    info.push(tomorrow[0]+' Tomorrow: '+Math.round(daily.temperature_2m_max[1])+'° / '+Math.round(daily.temperature_2m_min[1])+'°');
+   }
+   for(var i=0;i<info.length;i++){var line=document.createElement('div');line.textContent=info[i];extra.appendChild(line);}
   }catch(e){desc.textContent='Weather unavailable right now';}
  };
  request.onerror=request.ontimeout=function(){desc.textContent='Weather unavailable right now';};
