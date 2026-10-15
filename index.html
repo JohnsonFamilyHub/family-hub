@@ -62,6 +62,26 @@ html,body, input, textarea, select {font-family:'Nunito',Arial,sans-serif;}
 button, .task, .picker, summary, .calendar-toggle {font-family:'Fredoka','Nunito',Arial,sans-serif;}
 h1,h2,h3,h4,h5,h6, .hub-accordion>summary {font-family:'Fredoka','Nunito',Arial,sans-serif;letter-spacing:.1px;}
 button,summary {letter-spacing:.15px;}
+<style>
+/* Cozy twilight theme: softer contrast, warmer colors, and depth */
+body{background:radial-gradient(ellipse at 8% 4%,#f2b6b0 0%,transparent 38%),radial-gradient(ellipse at 92% 22%,#b6a0d4 0%,transparent 46%),linear-gradient(165deg,#b7a2cf 0%,#d9b2bf 37%,#f2c5ad 69%,#b5a4cb 100%);background-attachment:fixed;color:#262044;min-height:100vh}
+header{background:linear-gradient(115deg,#ffffffa8,#fff1e7a8);backdrop-filter:blur(8px);box-shadow:0 4px 25px #46345b1b}
+header h1{color:#29204f;font-size:clamp(27px,4vw,38px)}
+header p{color:#60516f}
+.welcome,.family-calendar,.kid-picker,.parent{background:#fff9f5ee;box-shadow:0 9px 25px #3b28552b;border:1px solid #ffffffa6;border-radius:24px}
+.kid.blue,.picker.blue{background:linear-gradient(145deg,#d9f1fc,#b9dbea);border:1px solid #fff9}
+.kid.pink,.picker.pink{background:linear-gradient(145deg,#ffe0ec,#f5bfd6);border:1px solid #fff9}
+.picker{box-shadow:0 5px 15px #46345b18;transition:transform .15s ease,box-shadow .15s ease}
+.picker:active{transform:scale(.98)}
+.calendar-toggle{background:#6965b7;color:#fff;box-shadow:0 3px 10px #524e9b26}
+.calendar-event{align-items:center;gap:13px}
+.calendar-date{display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:80px;width:80px;min-height:65px;text-align:center;background:#f4d9e7;color:#32275b;border-radius:14px;padding:8px 6px;line-height:1.2;flex-shrink:0}
+.calendar-date .day-abbrev{font-family:'Fredoka','Nunito',sans-serif;font-size:19px;font-weight:700}
+.calendar-date .month-day{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;margin-top:3px}
+.calendar-event:nth-child(even) .calendar-date{background:#e0daf8}
+.hub-accordion>summary{background:#f1eafa}
+.hub-accordion.nested>summary{background:#fbf7fd}
+@media(max-width:500px){.calendar-event{flex-direction:row;align-items:center;gap:10px}.calendar-date{min-width:73px;width:73px}}
 </style>
 </head>
 <body>
@@ -375,7 +395,7 @@ function render(){
  visible.forEach(function(e){
   var row=document.createElement('div');row.className='calendar-event';
   var date=document.createElement('div');date.className='calendar-date';
-  date.textContent=e.start.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',timeZone:'America/Denver'});
+  var dayLine=document.createElement('span');dayLine.className='day-abbrev';dayLine.textContent=e.start.toLocaleDateString('en-US',{weekday:'short',timeZone:'America/Denver'});var monthLine=document.createElement('span');monthLine.className='month-day';monthLine.textContent=e.start.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'America/Denver'});date.appendChild(dayLine);date.appendChild(monthLine);
   var detail=document.createElement('div');detail.className='calendar-event-info';
   var name=document.createElement('strong');name.textContent=e.title;detail.appendChild(name);
   var time=document.createElement('span');var opts={hour:'numeric',minute:'2-digit',timeZone:'America/Denver'};
