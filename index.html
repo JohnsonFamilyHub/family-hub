@@ -256,7 +256,7 @@ var status=document.getElementById('auth-status'),msg=document.getElementById('p
 if(!window.firebase){status.textContent='Firebase could not load. Check your internet connection.';login.disabled=true;return;}
 firebase.initializeApp(cfg);
 var auth=firebase.auth(),db=firebase.firestore(),provider=new firebase.auth.GoogleAuthProvider(),unsubscribe=null,requestsUnsub=null;
-var homeUid=['GJprO8II11grgG9nffWdUeHE14K3','UZepnsVmXDOIJAhfraw2bEOIPXq1'];
+var homeUid=['GJprO8II11grgG9nffWdUeHE14K3','UZepnsVmXDOIJAhfraw2bEOIPXq1','jSHsYKuMmqcuIQoyeNrbbChkn9i1'];
 var hubDebug=/[?&]debug=1(?:&|$)/.test(window.location.search),hubDebugLines=[];
 function hubDebugLog(which,message){if(!hubDebug)return;var e=document.getElementById('hub-debug-'+which);if(e)e.textContent=message;hubDebugLines.push(which+': '+message);}
 if(hubDebug){document.getElementById('hub-debug').style.display='block';document.getElementById('hub-debug-copy').onclick=function(){var content=hubDebugLines.join('\n');var box=document.createElement('textarea');box.value=content;document.body.appendChild(box);box.select();try{document.execCommand('copy');this.textContent='Copied!';}catch(e){this.textContent='Select the text to copy';}document.body.removeChild(box);};}
