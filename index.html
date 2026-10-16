@@ -183,7 +183,7 @@ main{padding-top:7px}
   <section class="family-calendar" id="family-calendar"><h3>📅 Today's Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
  </div>
 </section>
-<p class="status device-status" id="device-status">Checking homebase access…</p>
+<p class="status device-status" id="device-status">Checking homebase access…</p><div id="hub-debug" style="display:none;background:#fff8e9;border:2px solid #d9ac68;border-radius:12px;padding:12px;margin:10px 0;font-size:13px;overflow-wrap:anywhere"><strong>🔎 Homebase diagnostics</strong><p id="hub-debug-auth">Checking sign-in…</p><p id="hub-debug-write">No submission attempted yet.</p><p id="hub-debug-read">Request check not started.</p><button type="button" id="hub-debug-copy">Copy diagnostic details</button><p style="font-size:11px">This panel only appears when the address ends with ?debug=1. It does not change your sign-in or any data.</p></div>
 <section class="kid-picker" id="kid-picker"><h2>Whose dashboard?</h2><p>Tap your name to see today's chores and rewards.</p><div class="picker-buttons"><button class="picker blue" data-kid="kieran" type="button"><span aria-hidden="true" class="profile-emoji">⭐</span><span>Kieran</span><small class="home-balances" id="kieran-home-balances">⭐ Stars: — · 💰 Savings: —<span class="home-week" id="kieran-home-week">💵 This week: — / $15</span></small></button><button class="picker pink" data-kid="evie" type="button"><span aria-hidden="true" class="profile-emoji">🎀</span><span>Evie</span><small class="home-balances" id="evie-home-balances">⭐ Stars: — · 💰 Savings: —<span class="home-week" id="evie-home-week">💵 This week: — / $15</span></small></button></div></section><div class="hidden" id="dashboard-navigation"><button id="back-home" type="button">← Back to Home</button></div><div class="kids hidden" id="kid-dashboards">
 <section class="kid blue hidden" id="kieran-panel"><h2><span aria-hidden="true" class="profile-emoji">⭐</span> Kieran</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="kieran-stars">⭐ Stars: —</span><span class="stat" id="kieran-savings">💰 Savings: —</span><span class="stat" id="kieran-week">💵 This week: — / $15</span></div><div id="kieran"></div><div class="shop" id="kieran-shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="kieran-shop-grid"></div><p class="shop-message" id="kieran-shop-message"></p></div></section>
 <section class="kid pink hidden" id="evie-panel"><h2><span aria-hidden="true" class="profile-emoji">🎀</span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="evie-stars">⭐ Stars: —</span><span class="stat" id="evie-savings">💰 Savings: —</span><span class="stat" id="evie-week">💵 This week: — / $15</span></div><div id="evie"></div><div class="shop" id="evie-shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="evie-shop-grid"></div><p class="shop-message" id="evie-shop-message"></p></div></section>
@@ -255,6 +255,10 @@ if(!window.firebase){status.textContent='Firebase could not load. Check your int
 firebase.initializeApp(cfg);
 var auth=firebase.auth(),db=firebase.firestore(),provider=new firebase.auth.GoogleAuthProvider(),unsubscribe=null,requestsUnsub=null;
 var homeUid='GJprO8II11grgG9nffWdUeHE14K3';
+var hubDebug=/[?&]debug=1(?:&|$)/.test(window.location.search),hubDebugLines=[];
+function hubDebugLog(which,message){if(!hubDebug)return;var e=document.getElementById('hub-debug-'+which);if(e)e.textContent=message;hubDebugLines.push(which+': '+message);}
+if(hubDebug){document.getElementById('hub-debug').style.display='block';document.getElementById('hub-debug-copy').onclick=function(){var content=hubDebugLines.join('\n');var box=document.createElement('textarea');box.value=content;document.body.appendChild(box);box.select();try{document.execCommand('copy');this.textContent='Copied!';}catch(e){this.textContent='Select the text to copy';}document.body.removeChild(box);};}
+
 var requests=db.collection('family').doc('johnson').collection('choreRequests');
  var rewardRoot=db.collection('family').doc('johnson').collection('rewards');
  var rewardUnsubs=[],shopUnsub=null;
@@ -401,7 +405,24 @@ managerForm.onsubmit=function(e){
 
 function refreshControls(){window.hubControls.forEach(function(c){var st=window.hubRequestStatus[c.id];if(st==='approved')c.lock();else c.button.disabled=false;c.refresh();if(st==='pending')c.button.textContent='Waiting for approval';else if(st==='approved')c.button.textContent='Approved!';else if(st==='rejected')c.button.textContent=c.button.disabled?'Finish steps to resubmit':'Resubmit for approval';else c.button.textContent='Submit';});}
 window.hubRefreshControls=refreshControls;
- window.hubSubmit=function(id,child,taskId,button){if(!window.hubCanSubmit)return;button.disabled=true;button.textContent='Submitting…';requests.doc(id).set({child:child,taskId:taskId,date:id.split('_')[1],submittedAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'}).then(function(){window.hubRequestStatus[id]='pending';refreshControls();}).catch(function(err){button.textContent='Submit';refreshControls();alert('Could not submit: '+err.message);});};
+ window.hubSubmit=function(id,child,taskId,button){
+ if(!window.hubCanSubmit){hubDebugLog('write','Submission blocked: device not authorized in page.');return;}
+ button.disabled=true;button.textContent='Submitting…';
+ var ref=requests.doc(id),data={child:child,taskId:taskId,date:id.split('_')[1],submittedAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'};
+ hubDebugLog('write','Checking existing request: '+id);
+ ref.get().then(function(snapshot){
+  var previous=snapshot.exists?snapshot.data().status:'missing';
+  hubDebugLog('read','Request '+id+' status: '+previous);
+  if(previous==='approved'||previous==='pending'){window.hubRequestStatus[id]=previous;refreshControls();return;}
+  if(snapshot.exists){
+   if(previous!=='rejected')throw new Error('Existing request has unexpected status: '+previous);
+   hubDebugLog('write','Updating rejected request: '+id);
+   return ref.update({status:'pending',submittedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  hubDebugLog('write','Creating new request: '+id);
+  return ref.set(data);
+ }).then(function(){window.hubRequestStatus[id]='pending';refreshControls();hubDebugLog('write','Submission saved successfully: '+id);}).catch(function(err){button.textContent='Submit';refreshControls();hubDebugLog('write','Submission failed: '+id+' | '+(err.code||'unknown')+' | '+err.message);alert('Could not submit: '+err.message);});
+};
 function clearApprovals(){document.getElementById('approval-list').textContent='';}
 function friendlyTaskLabel(d){var task=String(d.taskId||'');if(/^routine_\d+$/.test(task)){var dt=new Date(String(d.date||'')+'T12:00:00');var wd=dt.getDay(),idx=Number(task.split('_')[1]),names;if(wd>=1&&wd<=5){names=d.child==='kieran'?['School morning','After school','Evening routine']:['Morning','Evening routine'];}else if(wd===0){names=['Church morning','Evening routine'];}else{names=['Evening routine'];}return (names[idx]||'Daily')+' routine';}if(/^paid_\d+$/.test(task)){var i=Number(task.split('_')[1]),paidNames=d.child==='kieran'?['Feed Keekee (wet food)','Empty dishwasher (if ready)','Help prepare dinner','Help Mom or Dad with an assigned task']:['Help unload dishwasher (silverware, if ready)','Help prepare food'];return paidNames[i]||'Paid chore';}return task;}
 var balances={kieran:null,evie:null},history={kieran:[],evie:[]};
@@ -437,7 +458,8 @@ reconnect.onclick=function(){
  }).catch(function(err){status.textContent='Could not connect: '+errorText(err);}).then(function(){reconnect.disabled=false;});
 };
 function clearList(){while(list.firstChild)list.removeChild(list.firstChild);}
-auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');document.getElementById('parent-open').classList.add('hidden');if(window.hubNavigate)window.hubNavigate('home');info.textContent='';if(!user){deviceStatus.textContent='';deviceStatus.style.display='none';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');reconnect.classList.remove('hidden');return;}
+auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');document.getElementById('parent-open').classList.add('hidden');if(window.hubNavigate)window.hubNavigate('home');info.textContent='';if(!user){hubDebugLog('auth','No Firebase user signed in.');deviceStatus.textContent='';deviceStatus.style.display='none';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');reconnect.classList.remove('hidden');return;}
+hubDebugLog('auth','Signed in: '+(user.isAnonymous?'anonymous':'Google')+' | UID: '+user.uid+' | matches authorized homebase: '+(user.isAnonymous&&user.uid===homeUid?'YES':'NO'));
 if(user.isAnonymous){login.classList.add('hidden');logout.classList.add('hidden');reconnect.classList.add('hidden');status.textContent=user.uid===homeUid?'🏡 Homebase iPad':'New iPad ID: '+user.uid+' — needs parent authorization';if(user.uid===homeUid){subscribeRewards(false);subscribeConfig(false);}
  if(user.uid===homeUid){window.hubCanSubmit=true;deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.style.display='block';deviceStatus.textContent='Cannot load chores: '+e.message;});}
  else{deviceStatus.textContent='';deviceStatus.style.display='none';}
