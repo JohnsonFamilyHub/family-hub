@@ -256,7 +256,7 @@ var status=document.getElementById('auth-status'),msg=document.getElementById('p
 if(!window.firebase){status.textContent='Firebase could not load. Check your internet connection.';login.disabled=true;return;}
 firebase.initializeApp(cfg);
 var auth=firebase.auth(),db=firebase.firestore(),provider=new firebase.auth.GoogleAuthProvider(),unsubscribe=null,requestsUnsub=null;
-var homeUid='GJprO8II11grgG9nffWdUeHE14K3';
+var homeUid=['GJprO8II11grgG9nffWdUeHE14K3','UZepnsVmXDOIJAhfraw2bEOIPXq1'];
 var hubDebug=/[?&]debug=1(?:&|$)/.test(window.location.search),hubDebugLines=[];
 function hubDebugLog(which,message){if(!hubDebug)return;var e=document.getElementById('hub-debug-'+which);if(e)e.textContent=message;hubDebugLines.push(which+': '+message);}
 if(hubDebug){document.getElementById('hub-debug').style.display='block';document.getElementById('hub-debug-copy').onclick=function(){var content=hubDebugLines.join('\n');var box=document.createElement('textarea');box.value=content;document.body.appendChild(box);box.select();try{document.execCommand('copy');this.textContent='Copied!';}catch(e){this.textContent='Select the text to copy';}document.body.removeChild(box);};}
@@ -461,9 +461,9 @@ reconnect.onclick=function(){
 };
 function clearList(){while(list.firstChild)list.removeChild(list.firstChild);}
 auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');document.getElementById('parent-open').classList.add('hidden');if(window.hubNavigate)window.hubNavigate('home');info.textContent='';if(!user){hubDebugLog('auth','No Firebase user signed in.');deviceStatus.textContent='';deviceStatus.style.display='none';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');reconnect.classList.remove('hidden');return;}
-hubDebugLog('auth','Signed in: '+(user.isAnonymous?'anonymous':'Google')+' | UID: '+user.uid+' | matches authorized homebase: '+(user.isAnonymous&&user.uid===homeUid?'YES':'NO'));
-if(user.isAnonymous){login.classList.add('hidden');logout.classList.add('hidden');reconnect.classList.add('hidden');status.textContent=user.uid===homeUid?'🏡 Homebase iPad':'New iPad ID: '+user.uid+' — needs parent authorization';if(user.uid===homeUid){subscribeRewards(false);subscribeConfig(false);}
- if(user.uid===homeUid){window.hubCanSubmit=true;deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.style.display='block';deviceStatus.textContent='Cannot load chores: '+e.message;});}
+hubDebugLog('auth','Signed in: '+(user.isAnonymous?'anonymous':'Google')+' | UID: '+user.uid+' | matches authorized homebase: '+(user.isAnonymous&&homeUid.indexOf(user.uid)!==-1?'YES':'NO'));
+if(user.isAnonymous){login.classList.add('hidden');logout.classList.add('hidden');reconnect.classList.add('hidden');status.textContent=homeUid.indexOf(user.uid)!==-1?'🏡 Homebase iPad':'New iPad ID: '+user.uid+' — needs parent authorization';if(user.uid===homeUid){subscribeRewards(false);subscribeConfig(false);}
+ if(homeUid.indexOf(user.uid)!==-1){window.hubCanSubmit=true;deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.style.display='block';deviceStatus.textContent='Cannot load chores: '+e.message;});}
  else{deviceStatus.textContent='';deviceStatus.style.display='none';}
  refreshControls();return;}
  reconnect.classList.add('hidden');login.classList.add('hidden');logout.classList.remove('hidden');status.textContent='Signed in: '+(user.email||'Google account');
@@ -541,7 +541,7 @@ if(!window.firebase)return;
 var auth=firebase.auth(),db=firebase.firestore();
 var root=document.getElementById('calendar-events'),status=document.getElementById('calendar-status'),stop=null;
 var allowed=['veronicalillianjohnson@gmail.com','joshcooperjohnson@gmail.com'];
-var homeUid='GJprO8II11grgG9nffWdUeHE14K3';
+var ='GJprO8II11grgG9nffWdUeHE14K3';
 function dateOf(v){if(!v)return null;if(typeof v.toDate==='function')return v.toDate();if(typeof v.seconds==='number')return new Date(v.seconds*1000);var d=new Date(v);return isNaN(d.getTime())?null:d;}
 function denverDay(d){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Denver',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);}
 var allEvents=[];
