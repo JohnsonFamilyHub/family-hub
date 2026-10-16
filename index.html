@@ -462,7 +462,8 @@ reconnect.onclick=function(){
 function clearList(){while(list.firstChild)list.removeChild(list.firstChild);}
 auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}if(requestsUnsub){requestsUnsub();requestsUnsub=null;}if(configUnsub){configUnsub();configUnsub=null;}rewardUnsubs.forEach(function(fn){fn();});rewardUnsubs=[];if(shopUnsub){shopUnsub();shopUnsub=null;}balances={kieran:null,evie:null};history={kieran:[],evie:[]};window.hubRender(window.hubDefaults.slice());window.hubCanSubmit=false;window.hubRequestStatus={};refreshControls();clearApprovals();clearList();area.classList.add('hidden');document.getElementById('parent-open').classList.add('hidden');if(window.hubNavigate)window.hubNavigate('home');info.textContent='';if(!user){hubDebugLog('auth','No Firebase user signed in.');deviceStatus.textContent='';deviceStatus.style.display='none';status.textContent='Not signed in';msg.textContent='Sign in with an approved parent Google account to access shared family information.';login.classList.remove('hidden');logout.classList.add('hidden');reconnect.classList.remove('hidden');return;}
 hubDebugLog('auth','Signed in: '+(user.isAnonymous?'anonymous':'Google')+' | UID: '+user.uid+' | matches authorized homebase: '+(user.isAnonymous&&homeUid.indexOf(user.uid)!==-1?'YES':'NO'));
-if(user.isAnonymous){login.classList.add('hidden');logout.classList.add('hidden');reconnect.classList.add('hidden');status.textContent=homeUid.indexOf(user.uid)!==-1?'🏡 Homebase iPad':'New iPad ID: '+user.uid+' — needs parent authorization';if(user.uid===homeUid){subscribeRewards(false);subscribeConfig(false);}
+
+if(user.isAnonymous){login.classList.add('hidden');logout.classList.add('hidden');reconnect.classList.add('hidden');status.textContent=homeUid.indexOf(user.uid)!==-1?'🏡 Homebase iPad':'New iPad ID: '+user.uid+' — needs parent authorization';if(homeUid.indexOf(user.uid)!==-1){subscribeRewards(false);subscribeConfig(false);}
  if(homeUid.indexOf(user.uid)!==-1){window.hubCanSubmit=true;deviceStatus.textContent='';deviceStatus.style.display='none';requestsUnsub=requests.onSnapshot(function(snapshot){window.hubRequestStatus={};snapshot.forEach(function(doc){window.hubRequestStatus[doc.id]=doc.data().status;});refreshControls();},function(e){deviceStatus.style.display='block';deviceStatus.textContent='Cannot load chores: '+e.message;});}
  else{deviceStatus.textContent='';deviceStatus.style.display='none';}
  refreshControls();return;}
@@ -579,7 +580,7 @@ function show(snapshot){allEvents=[];snapshot.forEach(function(doc){var x=doc.da
 auth.onAuthStateChanged(function(user){
  if(stop){stop();stop=null;}allEvents=[];root.textContent='';
  var parent=user&&!user.isAnonymous&&user.emailVerified&&allowed.indexOf((user.email||'').toLowerCase())!==-1;
- var home=user&&user.isAnonymous&&user.uid===homeUid;
+ var home=user&&user.isAnonymous&&homeUid.indexOf(user.uid)!==-1;
  if(!parent&&!home){status.textContent='Sign in on an approved device to see family events.';return;}
  status.textContent='Loading family calendar…';
  stop=db.collection('family').doc('johnson').collection('calendarEvents').onSnapshot(show,function(e){status.textContent='Could not load calendar: '+e.message;});
