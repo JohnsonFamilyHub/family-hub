@@ -177,7 +177,8 @@ main{padding-top:7px}
 .chore-day-nav button:disabled{background:#c5c0d3;cursor:default}
 .chore-day-nav .chore-day-title{text-align:center;font-weight:800;flex:1;font-size:16px}
 .chore-day-note{text-align:center;font-size:12px;color:#55496b;margin:5px 0 12px}
-<style>/* Easier-to-read daily high and low temperatures */
+/* Easier-to-read daily high and low temperatures */
+.calendar-remove{display:block;margin-top:7px;border:0;border-radius:7px;background:#87546a;color:white;font-size:12px;padding:7px 10px;cursor:pointer}
 .weather-range{font-size:19px!important;font-weight:900!important;line-height:1.4!important;}
 @media(max-width:600px){.weather-range{font-size:18px!important;}}
 </style></head>
@@ -402,8 +403,12 @@ function subscribeConfig(parent){
    configRef.update({tasks:upgraded}).catch(function(e){managerStatus.textContent='Could not upgrade bedtime routines: '+e.message;});
   }
   // Keep custom saved chores; supplement missing weekend routines from current defaults.
-  var missingWeekend=window.hubDefaults.filter(function(t){return (t.id==='k-weekend'||t.id==='e-weekend')&&!tasks.some(function(x){return x.id===t.id&&x.child===t.child;});});
-  scheduleTasks=tasks.map(copyTask).concat(missingWeekend.map(copyTask));
+  var weekendIds=['k-weekend','e-weekend'];
+  // Ensure the two weekend routines appear even if an older saved schedule
+  // contains paused or incorrectly scheduled versions of these IDs.
+  var preserved=tasks.filter(function(x){return weekendIds.indexOf(x.id)===-1;}).map(copyTask);
+  var weekendRoutines=window.hubDefaults.filter(function(x){return weekendIds.indexOf(x.id)!==-1;}).map(copyTask);
+  scheduleTasks=preserved.concat(weekendRoutines);
   window.hubRender(scheduleTasks);
   refreshControls();
   if(parent){updateManager();managerStatus.textContent=doc.exists?'Schedules synced.':'Showing default schedules. Save an edit to start syncing custom schedules.';}
@@ -570,7 +575,8 @@ var allowed=['veronicalillianjohnson@gmail.com','joshcooperjohnson@gmail.com'];
 var homeUid=['GJprO8II11grgG9nffWdUeHE14K3','UZepnsVmXDOIJAhfraw2bEOIPXq1','jSHsYKuMmqcuIQoyeNrbbChkn9i1'];
 function dateOf(v){if(!v)return null;if(typeof v.toDate==='function')return v.toDate();if(typeof v.seconds==='number')return new Date(v.seconds*1000);var d=new Date(v);return isNaN(d.getTime())?null:d;}
 function denverDay(d){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Denver',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);}
-var allEvents=[];
+var allEvents=[],calendarParent=false;
+var calendarCollection=db.collection('family').doc('johnson').collection('calendarEvents');
 var toggle=document.getElementById('calendar-toggle');
 toggle.textContent='View Full Calendar →';toggle.removeAttribute('aria-expanded');
 toggle.onclick=function(){window.hubNavigate('calendar');};
@@ -586,7 +592,9 @@ function eventNode(e){
  var monthLine=document.createElement('span');monthLine.className='month-day';monthLine.textContent=e.start.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'America/Denver'});date.appendChild(dayLine);date.appendChild(monthLine);
  var detail=document.createElement('div');detail.className='calendar-event-info';var name=document.createElement('strong');name.textContent=e.title;detail.appendChild(name);
  var time=document.createElement('span');var opts={hour:'numeric',minute:'2-digit',timeZone:'America/Denver'};
- time.textContent=e.allDay?'All day':e.start.toLocaleTimeString('en-US',opts)+(e.end?' – '+e.end.toLocaleTimeString('en-US',opts):'');detail.appendChild(time);row.appendChild(date);row.appendChild(detail);return row;
+ time.textContent=e.allDay?'All day':e.start.toLocaleTimeString('en-US',opts)+(e.end?' – '+e.end.toLocaleTimeString('en-US',opts):'');detail.appendChild(time);
+ if(calendarParent&&e.docId){var remove=document.createElement('button');remove.type='button';remove.className='calendar-remove';remove.textContent='Remove outdated entry';remove.onclick=function(){if(!confirm('Remove this event from Family Hub? This does not change Google Calendar. If the calendar importer adds it again, its sync must be corrected.'))return;remove.disabled=true;calendarCollection.doc(e.docId).delete().catch(function(err){remove.disabled=false;alert('Could not remove event: '+err.message);});};detail.appendChild(remove);}
+ row.appendChild(date);row.appendChild(detail);return row;
 }
 function renderDay(){var target=document.getElementById('selected-day-events');target.textContent='';document.getElementById('selected-day-heading').textContent=new Date(selectedDay+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});var items=eventsForDay(selectedDay);if(!items.length){var p=document.createElement('p');p.className='status';p.textContent='No events scheduled.';target.appendChild(p);}items.forEach(function(e){target.appendChild(eventNode(e));});}
 function renderMonth(){
@@ -601,14 +609,15 @@ document.getElementById('month-prev').onclick=function(){shownMonth.setMonth(sho
 document.getElementById('month-next').onclick=function(){shownMonth.setMonth(shownMonth.getMonth()+1);renderMonth();};
 window.hubRenderMonth=renderMonth;
 function render(){root.textContent='';var today=denverDay(new Date()),visible=eventsForDay(today);status.textContent=visible.length?'':'No events scheduled for today.';visible.forEach(function(e){root.appendChild(eventNode(e));});renderMonth();}
-function show(snapshot){allEvents=[];snapshot.forEach(function(doc){var x=doc.data(),start=dateOf(x.start),end=dateOf(x.end);if(start)allEvents.push({title:String(x.title||'Untitled event'),start:start,end:end,allDay:x.allDay===true});});allEvents.sort(function(a,b){return a.start-b.start;});render();}
+function show(snapshot){allEvents=[];snapshot.forEach(function(doc){var x=doc.data(),start=dateOf(x.start),end=dateOf(x.end);if(start)allEvents.push({title:String(x.title||'Untitled event'),start:start,end:end,allDay:x.allDay===true,docId:doc.id});});allEvents.sort(function(a,b){return a.start-b.start;});render();}
 auth.onAuthStateChanged(function(user){
  if(stop){stop();stop=null;}allEvents=[];root.textContent='';
  var parent=user&&!user.isAnonymous&&user.emailVerified&&allowed.indexOf((user.email||'').toLowerCase())!==-1;
  var home=user&&user.isAnonymous&&homeUid.indexOf(user.uid)!==-1;
+ calendarParent=!!parent;
  if(!parent&&!home){status.textContent='Sign in on an approved device to see family events.';return;}
  status.textContent='Loading family calendar…';
- stop=db.collection('family').doc('johnson').collection('calendarEvents').onSnapshot(show,function(e){status.textContent='Could not load calendar: '+e.message;});
+ stop=calendarCollection.onSnapshot(show,function(e){status.textContent='Could not load calendar: '+e.message;});
 });
 })();
 </script>
