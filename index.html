@@ -179,8 +179,8 @@ main{padding-top:7px}
 .chore-day-note{text-align:center;font-size:12px;color:#55496b;margin:5px 0 12px}
 /* Easier-to-read daily high and low temperatures */
 .calendar-remove{display:block;margin-top:7px;border:0;border-radius:7px;background:#87546a;color:white;font-size:12px;padding:7px 10px;cursor:pointer}
-.weather-range{font-size:19px!important;font-weight:900!important;line-height:1.4!important;}
-@media(max-width:600px){.weather-range{font-size:18px!important;}}
+.weather-range{font-size:clamp(14px,2.3vw,19px)!important;font-weight:900!important;line-height:1.4!important;white-space:nowrap!important;letter-spacing:-.3px;}
+@media(max-width:600px){.weather-range{font-size:clamp(15px,4vw,19px)!important;}}
 </style></head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1></header>
@@ -715,6 +715,57 @@ auth.onAuthStateChanged(function(user){
  document.getElementById('countdown-form').onsubmit=function(e){e.preventDefault();if(!isParent)return;var name=document.getElementById('cd-name').value.trim(),date=document.getElementById('cd-date').value;if(!name||!date)return;var item={id:editing||'cd-'+Date.now(),name:name,date:date,emoji:document.getElementById('cd-emoji').value.trim()||'🎉',child:document.getElementById('cd-child').value,repeat:document.getElementById('cd-repeat').checked};save('upsert',item);};
  auth.onAuthStateChanged(function(user){if(unsubscribe){unsubscribe();unsubscribe=null;}isParent=!!(user&&!user.isAnonymous&&user.emailVerified&&parents.indexOf((user.email||'').toLowerCase())!==-1);var home=!!(user&&user.isAnonymous&&homeUid.indexOf(user.uid)!==-1);countdowns=[];render();if(!isParent&&!home)return;unsubscribe=docRef.onSnapshot(function(snap){var data=snap.data();countdowns=data&&Array.isArray(data.items)?data.items:[];render();},function(e){document.getElementById('cd-status').textContent='Countdown sync unavailable: '+e.message;});});
  render();
+})();
+</script>
+
+<script>
+/* Homebase auto-refresh: day rollover, wake, and new GitHub releases.
+   Does not clear storage, log out, or modify Firebase authentication. */
+(function(){
+ 'use strict';
+ var release='JFH_RELEASE_20261017_AUTODAY_01';
+ var startedDay=localDay();
+ var checking=false,lastCheck=0,reloadPending=false;
+ function localDay(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+ function safeToReload(){
+  var parent=document.getElementById('parent-screen');
+  var kids=document.getElementById('kid-dashboards');
+  var calendar=document.getElementById('calendar-screen');
+  return (!parent||parent.classList.contains('hidden'))&&(!kids||kids.classList.contains('hidden'))&&(!calendar||calendar.classList.contains('hidden'));
+ }
+ function refresh(){
+  if(!safeToReload()){reloadPending=true;return;}
+  var url=window.location.href.split('#')[0];
+  url=url.replace(/([?&])hubRefresh=[^&]*&?/g,'$1').replace(/[?&]$/,'');
+  url+=(url.indexOf('?')===-1?'?':'&')+'hubRefresh='+new Date().getTime();
+  window.location.replace(url);
+ }
+ function checkRelease(){
+  var now=new Date().getTime();if(checking||now-lastCheck<15*60*1000)return;
+  checking=true;lastCheck=now;
+  var xhr=new XMLHttpRequest();
+  var url=window.location.pathname+'?hubVersionCheck='+now;
+  xhr.open('GET',url,true);xhr.timeout=12000;
+  xhr.onreadystatechange=function(){
+   if(xhr.readyState!==4)return;checking=false;
+   if(xhr.status!==200)return;
+   var match=xhr.responseText.match(/var release='(JFH_RELEASE_[A-Za-z0-9_]+)'/);
+   if(match&&match[1]!==release)refresh();
+  };
+  xhr.onerror=xhr.ontimeout=function(){checking=false;};
+  try{xhr.send();}catch(e){checking=false;}
+ }
+ function check(){
+  if(localDay()!==startedDay){refresh();return;}
+  if(reloadPending&&safeToReload()){refresh();return;}
+  checkRelease();
+ }
+ setInterval(check,60000);
+ document.addEventListener('visibilitychange',function(){if(!document.hidden)check();});
+ window.addEventListener('pageshow',check);
+ window.addEventListener('focus',check);
+ // Check for deployed updates shortly after opening, then periodically.
+ setTimeout(check,10000);
 })();
 </script>
 </body>
