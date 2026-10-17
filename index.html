@@ -5,6 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <title>Johnson Family Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -177,10 +178,16 @@ main{padding-top:7px}
 .chore-day-nav button:disabled{background:#c5c0d3;cursor:default}
 .chore-day-nav .chore-day-title{text-align:center;font-weight:800;flex:1;font-size:16px}
 .chore-day-note{text-align:center;font-size:12px;color:#55496b;margin:5px 0 12px}
+/* Family weather hierarchy and compact high/low on small screens */
+.weather-card>h3{font-size:clamp(23px,3.3vw,29px)!important;font-weight:800!important}
+.weather-today .weather-day-label{font-size:clamp(22px,3vw,26px)!important;font-weight:800!important}
+.weather-now-label{display:block;font-family:Fredoka,Nunito,sans-serif;font-size:15px;font-weight:800;color:#443b68;margin:3px 0 1px}
+.weather-range{font-size:clamp(12px,1.8vw,17px)!important;white-space:nowrap!important;letter-spacing:-.6px!important}
+@media(max-width:600px){.weather-range{font-size:clamp(14px,3.4vw,17px)!important}}
 /* Easier-to-read daily high and low temperatures */
 .calendar-remove{display:block;margin-top:7px;border:0;border-radius:7px;background:#87546a;color:white;font-size:12px;padding:7px 10px;cursor:pointer}
-.weather-range{font-size:clamp(14px,2.3vw,19px)!important;font-weight:900!important;line-height:1.4!important;white-space:nowrap!important;letter-spacing:-.3px;}
-@media(max-width:600px){.weather-range{font-size:clamp(15px,4vw,19px)!important;}}
+.weather-range{font-size:clamp(12px,1.8vw,17px)!important;font-weight:900!important;line-height:1.4!important;white-space:nowrap!important;letter-spacing:-.3px;}
+@media(max-width:600px){.weather-range{font-size:clamp(14px,3.4vw,17px)!important;}}
 </style></head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1></header>
@@ -190,13 +197,13 @@ main{padding-top:7px}
  <div class="daily-heading"><h2>☀️ Today's Dashboard</h2><p id="today">Welcome home!</p></div>
  <div class="daily-cards">
   <section class="weather-card" aria-label="Today and tomorrow weather"><h3>🌤️ Weather</h3><div class="weather-split">
- <div class="weather-today"><p class="weather-day-label">Today</p><span class="weather-big-icon" id="weather-icon" aria-hidden="true">🌤️</span><strong class="weather-temperature" id="weather-temp">—°</strong><p class="weather-condition" id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-clothes" id="weather-clothes"></p></div>
+ <div class="weather-today"><p class="weather-day-label">Today</p><span class="weather-big-icon" id="weather-icon" aria-hidden="true">🌤️</span><span class="weather-now-label">Right Now</span><strong class="weather-temperature" id="weather-temp">—°</strong><p class="weather-condition" id="weather-description">Loading weather…</p><p class="weather-range" id="weather-range"></p><p class="weather-clothes" id="weather-clothes"></p></div>
  <div class="weather-extra" id="weather-extra" aria-live="polite"><p class="weather-day-label">Tomorrow</p><span class="weather-big-icon" id="tomorrow-icon" aria-hidden="true">🌤️</span><strong class="weather-temperature" id="tomorrow-temp">—°</strong><p class="weather-condition" id="tomorrow-description">Loading…</p><p class="weather-range" id="tomorrow-range"></p><p class="weather-clothes" id="tomorrow-clothes"></p></div>
  </div></section>
   <section class="family-calendar" id="family-calendar"><h3>📅 Today's Events</h3><p class="status" id="calendar-status">Sign in on an approved device to see family events.</p><div id="calendar-events"></div><button aria-expanded="false" class="calendar-toggle" id="calendar-toggle" type="button">View Full Calendar ▾</button></section>
  </div>
 </section>
-<p class="status device-status" id="device-status">Checking homebase access…</p><div id="hub-debug" style="display:none;background:#fff8e9;border:2px solid #d9ac68;border-radius:12px;padding:12px;margin:10px 0;font-size:13px;overflow-wrap:anywhere"><strong>🔎 Homebase diagnostics</strong><p id="hub-debug-auth">Checking sign-in…</p><p id="hub-debug-write">No submission attempted yet.</p><p id="hub-debug-read">Request check not started.</p><button type="button" id="hub-debug-copy">Copy diagnostic details</button><p style="font-size:11px">This panel only appears when the address ends with ?debug=1. It does not change your sign-in or any data.</p></div>
+<p class="status device-status" id="device-status">Checking homebase access…</p><div id="hub-update-control" style="text-align:center;display:none"><button id="hub-update-now" type="button" style="background:#6965b7;color:#fff;border:0;border-radius:9px;padding:7px 12px;font-size:13px">↻ Check for Hub Update</button></div><div id="hub-debug" style="display:none;background:#fff8e9;border:2px solid #d9ac68;border-radius:12px;padding:12px;margin:10px 0;font-size:13px;overflow-wrap:anywhere"><strong>🔎 Homebase diagnostics</strong><p id="hub-debug-auth">Checking sign-in…</p><p id="hub-debug-write">No submission attempted yet.</p><p id="hub-debug-read">Request check not started.</p><button type="button" id="hub-debug-copy">Copy diagnostic details</button><p style="font-size:11px">This panel only appears when the address ends with ?debug=1. It does not change your sign-in or any data.</p></div>
 <section class="kid-picker" id="kid-picker"><h2>Whose dashboard?</h2><p>Tap your name to see chores and rewards.</p><div class="picker-buttons"><button class="picker blue" data-kid="kieran" type="button"><span aria-hidden="true" class="profile-emoji">⭐</span><span>Kieran</span><small class="home-balances" id="kieran-home-balances">⭐ Stars: — · 💰 Savings: —<span class="home-week" id="kieran-home-week">💵 This week: — / $15</span></small></button><button class="picker pink" data-kid="evie" type="button"><span aria-hidden="true" class="profile-emoji">🎀</span><span>Evie</span><small class="home-balances" id="evie-home-balances">⭐ Stars: — · 💰 Savings: —<span class="home-week" id="evie-home-week">💵 This week: — / $15</span></small></button></div></section><div class="hidden" id="dashboard-navigation"><button id="back-home" type="button">← Back to Home</button></div><div class="kids hidden" id="kid-dashboards">
 <section class="kid blue hidden" id="kieran-panel"><h2><span aria-hidden="true" class="profile-emoji">⭐</span> Kieran</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="kieran-stars">⭐ Stars: —</span><span class="stat" id="kieran-savings">💰 Savings: —</span><span class="stat" id="kieran-week">💵 This week: — / $15</span></div><div class="chore-day-nav" aria-label="Choose chore date"><button type="button" data-day-back aria-label="Previous day">‹</button><span class="chore-day-title" data-day-label>Today</span><button type="button" data-day-forward aria-label="Next day">›</button></div><p class="chore-day-note" data-day-note></p><div id="kieran"></div><div class="shop" id="kieran-shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="kieran-shop-grid"></div><p class="shop-message" id="kieran-shop-message"></p></div></section>
 <section class="kid pink hidden" id="evie-panel"><h2><span aria-hidden="true" class="profile-emoji">🎀</span> Evie</h2><p class="subtitle">My daily dashboard</p><div class="dashboard-stats"><span class="stat" id="evie-stars">⭐ Stars: —</span><span class="stat" id="evie-savings">💰 Savings: —</span><span class="stat" id="evie-week">💵 This week: — / $15</span></div><div class="chore-day-nav" aria-label="Choose chore date"><button type="button" data-day-back aria-label="Previous day">‹</button><span class="chore-day-title" data-day-label>Today</span><button type="button" data-day-forward aria-label="Next day">›</button></div><p class="chore-day-note" data-day-note></p><div id="evie"></div><div class="shop" id="evie-shop"><h3>🎁 Rewards Shop</h3><p class="shop-message">Tap a star tier below to browse rewards.</p><div class="shop-grid" id="evie-shop-grid"></div><p class="shop-message" id="evie-shop-message"></p></div></section>
@@ -255,7 +262,8 @@ t('bedsheets','kieran','paid','Change own bedsheets','🛏️',[6],[],.75),
 t('rugs','kieran','paid','Wash and replace four first-floor rugs','🧽',[6],[],.75),
 t('litter','kieran','paid','Clean Keekee’s litter box','🐈',[0],[],.75),
 t('silverware','evie','paid','Put away clean silverware','🍴',all,[],.75),
-t('feed_dogs','evie','paid','Feed Ozzy & Dolly (morning and evening)','🐕',all,[],.75),
+t('feed_dogs_morning','evie','paid','Feed Ozzy & Dolly — Morning','🐕',all,[],.50),
+ t('feed_dogs_evening','evie','paid','Feed Ozzy & Dolly — Evening','🐕',all,[],.25),
 t('set_table','evie','paid','Set the dinner table','🍽️',[0,2,4,6],[],.75),
 t('laundry','evie','paid','Wash and put away own laundry','🧺',[6],[],.75),
 t('bedsheets','evie','paid','Help change own bedsheets','🛏️',[6],[],.75)
@@ -263,7 +271,7 @@ t('bedsheets','evie','paid','Help change own bedsheets','🛏️',[6],[],.75)
 window.hubTasks=window.hubDefaults.slice();
 function pict(t){var x=t.toLowerCase(),symbol='⭐';if(x.indexOf('teeth')>=0)symbol='😁';else if(x.indexOf('wake')>=0)symbol='⏰';else if(x.indexOf('hamper')>=0)symbol='🧺';else if(x.indexOf('comfortable')>=0)symbol='👖';else if(x.indexOf('dressed')>=0)symbol='👕';else if(x.indexOf('shower')>=0)symbol='🚿';else if(x.indexOf('bathroom')>=0)symbol='🚽';else if(x.indexOf('leave')>=0)symbol='🎒';else if(x.indexOf('bed')>=0)symbol='🛏️';else if(x.indexOf('keekee')>=0)symbol='🐈';else if(x.indexOf('toys')>=0)symbol='🧸';else if(x.indexOf('water')>=0)symbol='💧';return symbol;}
 function mk(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
-window.hubRender=function(tasks){window.hubTasks=tasks;window.hubControls=[];['kieran','evie'].forEach(function(child){var root=document.getElementById(child);root.textContent='';var selectedDay=selectedChoreDate.getDay(),selectedDateKey=choreDateString(selectedChoreDate);var todays=tasks.filter(function(x){return x.child===child&&x.active!==false&&x.days.indexOf(selectedDay)!==-1;});todays.filter(function(x){return x.kind==='star';}).forEach(function(r){var section=mk('section','routine'),h=mk('h3','',(r.icon||'⭐')+' '+r.name+' · '+Number(r.value||1)+' possible star(s)');section.appendChild(h);var checks=[];var steps=r.steps.slice();if(r.id==='k-evening'&&(selectedDay===0||selectedDay===6))steps.unshift('Shower');steps.forEach(function(step){var b=mk('button','task');b.type='button';b.setAttribute('aria-pressed','false');b.appendChild(mk('span','picture',pict(step)));b.appendChild(mk('span','label',step));var mark=mk('span','check','○');b.appendChild(mark);b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';b.setAttribute('aria-pressed',done?'true':'false');};checks.push(b);section.appendChild(b);});var send=mk('button','submit-routine','Submit');send.type='button';var reqId=child+'_'+selectedDateKey+'_routine_'+r.id;function refresh(){var st=window.hubRequestStatus[reqId];send.disabled=!checks.length||!checks.every(function(b){return b.classList.contains('done');})||!window.hubCanSubmit||!choreDateEditable()||st==='pending'||st==='approved';if(st==='rejected'&&window.hubCanSubmit&&choreDateEditable()&&checks.every(function(b){return b.classList.contains('done');}))send.disabled=false;}checks.forEach(function(b){b.addEventListener('click',refresh);});send.onclick=function(){window.hubSubmit(reqId,child,r.id,send);};window.hubControls.push({id:reqId,button:send,refresh:refresh,lock:function(){checks.forEach(function(b){b.classList.add('done');b.setAttribute('aria-pressed','true');b.querySelector('.check').textContent='✓';b.disabled=true;});}});section.appendChild(send);section.appendChild(mk('p','note','Complete every step, then submit for parent review. Stars are credited after parent approval.'));root.appendChild(section);});var section=mk('section','paid-section');section.appendChild(mk('h3','','Paid chores'));section.appendChild(mk('p','note','Paid chores require parent approval. Approved chores add to your savings.'));todays.filter(function(x){return x.kind==='paid';}).forEach(function(r){var b=mk('button','paid-item');b.type='button';b.appendChild(mk('span','picture',r.icon||'💰'));b.appendChild(mk('span','paid-label',r.name));b.appendChild(mk('span','amount','$'+Number(r.value).toFixed(2)));var mark=mk('span','mark','○');b.appendChild(mark);b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';};section.appendChild(b);var send=mk('button','submit-paid','Submit');send.type='button';var reqId=child+'_'+selectedDateKey+'_paid_'+r.id;function refresh(){var st=window.hubRequestStatus[reqId];send.disabled=!b.classList.contains('done')||!window.hubCanSubmit||!choreDateEditable()||st==='pending'||st==='approved';if(st==='rejected'&&window.hubCanSubmit&&choreDateEditable()&&b.classList.contains('done'))send.disabled=false;}b.addEventListener('click',refresh);send.onclick=function(){window.hubSubmit(reqId,child,r.id,send);};window.hubControls.push({id:reqId,button:send,refresh:refresh,lock:function(){b.classList.add('done');mark.textContent='✓';b.disabled=true;}});section.appendChild(send);});root.appendChild(section);});updateChoreDayNavigation();if(window.hubRefreshControls)window.hubRefreshControls();};
+window.hubRender=function(tasks){window.hubTasks=tasks;window.hubControls=[];['kieran','evie'].forEach(function(child){var root=document.getElementById(child);root.textContent='';var selectedDay=selectedChoreDate.getDay(),selectedDateKey=choreDateString(selectedChoreDate);var todays=tasks.filter(function(x){return x.child===child&&x.active!==false&&x.days.indexOf(selectedDay)!==-1;});todays.filter(function(x){return x.kind==='star';}).sort(function(a,b){function rank(t){if(t.id==='k-weekend'||t.id==='e-weekend')return -2;if(t.id==='k-church'||t.id==='e-church')return -1;return 0;}return rank(a)-rank(b);}).forEach(function(r){var section=mk('section','routine'),h=mk('h3','',(r.icon||'⭐')+' '+r.name+' · '+Number(r.value||1)+' possible star(s)');section.appendChild(h);var checks=[];var steps=r.steps.slice();if(r.id==='k-evening'&&(selectedDay===0||selectedDay===6))steps.unshift('Shower');steps.forEach(function(step){var b=mk('button','task');b.type='button';b.setAttribute('aria-pressed','false');b.appendChild(mk('span','picture',pict(step)));b.appendChild(mk('span','label',step));var mark=mk('span','check','○');b.appendChild(mark);b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';b.setAttribute('aria-pressed',done?'true':'false');};checks.push(b);section.appendChild(b);});var send=mk('button','submit-routine','Submit');send.type='button';var reqId=child+'_'+selectedDateKey+'_routine_'+r.id;function refresh(){var st=window.hubRequestStatus[reqId];send.disabled=!checks.length||!checks.every(function(b){return b.classList.contains('done');})||!window.hubCanSubmit||!choreDateEditable()||st==='pending'||st==='approved';if(st==='rejected'&&window.hubCanSubmit&&choreDateEditable()&&checks.every(function(b){return b.classList.contains('done');}))send.disabled=false;}checks.forEach(function(b){b.addEventListener('click',refresh);});send.onclick=function(){window.hubSubmit(reqId,child,r.id,send);};window.hubControls.push({id:reqId,button:send,refresh:refresh,lock:function(){checks.forEach(function(b){b.classList.add('done');b.setAttribute('aria-pressed','true');b.querySelector('.check').textContent='✓';b.disabled=true;});}});section.appendChild(send);section.appendChild(mk('p','note','Complete every step, then submit for parent review. Stars are credited after parent approval.'));root.appendChild(section);});var section=mk('section','paid-section');section.appendChild(mk('h3','','Paid chores'));section.appendChild(mk('p','note','Paid chores require parent approval. Approved chores add to your savings.'));todays.filter(function(x){return x.kind==='paid';}).sort(function(a,b){function rank(t){if(t.id==='feed_dogs_morning')return -1;if(t.id==='feed_keekee'||t.id==='feed_dogs_evening')return 1;return 0;}return rank(a)-rank(b);}).forEach(function(r){var b=mk('button','paid-item');b.type='button';b.appendChild(mk('span','picture',r.icon||'💰'));b.appendChild(mk('span','paid-label',r.name));b.appendChild(mk('span','amount','$'+Number(r.value).toFixed(2)));var mark=mk('span','mark','○');b.appendChild(mark);b.onclick=function(){var done=b.classList.toggle('done');mark.textContent=done?'✓':'○';};section.appendChild(b);var send=mk('button','submit-paid','Submit');send.type='button';var reqId=child+'_'+selectedDateKey+'_paid_'+r.id;function refresh(){var st=window.hubRequestStatus[reqId];send.disabled=!b.classList.contains('done')||!window.hubCanSubmit||!choreDateEditable()||st==='pending'||st==='approved';if(st==='rejected'&&window.hubCanSubmit&&choreDateEditable()&&b.classList.contains('done'))send.disabled=false;}b.addEventListener('click',refresh);send.onclick=function(){window.hubSubmit(reqId,child,r.id,send);};window.hubControls.push({id:reqId,button:send,refresh:refresh,lock:function(){b.classList.add('done');mark.textContent='✓';b.disabled=true;}});section.appendChild(send);});root.appendChild(section);});updateChoreDayNavigation();if(window.hubRefreshControls)window.hubRefreshControls();};
 window.hubRender(window.hubTasks);
 })();
 </script>
@@ -409,6 +417,19 @@ function subscribeConfig(parent){
   var preserved=tasks.filter(function(x){return weekendIds.indexOf(x.id)===-1;}).map(copyTask);
   var weekendRoutines=window.hubDefaults.filter(function(x){return weekendIds.indexOf(x.id)!==-1;}).map(copyTask);
   scheduleTasks=preserved.concat(weekendRoutines);
+  // Split Evie's existing combined dog chore without losing old approval records.
+  // Keep the original ID inactive for historical/pending approvals.
+  var legacyDog=scheduleTasks.filter(function(x){return x.child==='evie'&&x.id==='feed_dogs';})[0];
+  var dogChanged=false;
+  if(legacyDog&&legacyDog.active!==false){legacyDog.active=false;dogChanged=true;}
+  ['feed_dogs_morning','feed_dogs_evening'].forEach(function(id){
+   if(!scheduleTasks.some(function(x){return x.child==='evie'&&x.id===id;})){
+    var newDog=window.hubDefaults.filter(function(x){return x.child==='evie'&&x.id===id;})[0];
+    scheduleTasks.push(copyTask(newDog));dogChanged=true;
+   }
+  });
+  // Persist for all devices when a parent is signed in; don't grant write access to the iPad.
+  if(parent&&doc.exists&&dogChanged){configRef.update({tasks:scheduleTasks}).catch(function(e){managerStatus.textContent='Could not sync dog-feeding changes: '+e.message;});}
   window.hubRender(scheduleTasks);
   refreshControls();
   if(parent){updateManager();managerStatus.textContent=doc.exists?'Schedules synced.':'Showing default schedules. Save an edit to start syncing custom schedules.';}
@@ -737,7 +758,7 @@ auth.onAuthStateChanged(function(user){
    Does not clear storage, log out, or modify Firebase authentication. */
 (function(){
  'use strict';
- var release='JFH_RELEASE_20261017_AUTODAY_01';
+ var release='JFH_RELEASE_20261017_DOGS_WEATHER_CACHE_02';
  var startedDay=localDay();
  var checking=false,lastCheck=0,reloadPending=false;
  function localDay(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
@@ -754,12 +775,14 @@ auth.onAuthStateChanged(function(user){
   url+=(url.indexOf('?')===-1?'?':'&')+'hubRefresh='+new Date().getTime();
   window.location.replace(url);
  }
+ var manualButton=document.getElementById('hub-update-now');
+ if(manualButton){document.getElementById('hub-update-control').style.display='block';manualButton.onclick=function(){lastCheck=0;manualButton.textContent='Checking…';checkRelease();setTimeout(function(){manualButton.textContent='↻ Check for Hub Update';},15000);};}
  function checkRelease(){
-  var now=new Date().getTime();if(checking||now-lastCheck<15*60*1000)return;
+  var now=new Date().getTime();if(checking||now-lastCheck<5*60*1000)return;
   checking=true;lastCheck=now;
   var xhr=new XMLHttpRequest();
   var url=window.location.pathname+'?hubVersionCheck='+now;
-  xhr.open('GET',url,true);xhr.timeout=12000;
+  xhr.open('GET',url,true);xhr.timeout=12000;try{xhr.setRequestHeader('Cache-Control','no-cache, no-store, max-age=0');xhr.setRequestHeader('Pragma','no-cache');}catch(e){}
   xhr.onreadystatechange=function(){
    if(xhr.readyState!==4)return;checking=false;
    if(xhr.status!==200)return;
