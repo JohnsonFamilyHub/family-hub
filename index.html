@@ -178,8 +178,8 @@ main{padding-top:7px}
 .chore-day-nav .chore-day-title{text-align:center;font-weight:800;flex:1;font-size:16px}
 .chore-day-note{text-align:center;font-size:12px;color:#55496b;margin:5px 0 12px}
 <style>/* Easier-to-read daily high and low temperatures */
-.weather-range{font-size:15px!important;font-weight:900!important;line-height:1.4!important;}
-@media(max-width:600px){.weather-range{font-size:15px!important;}}
+.weather-range{font-size:19px!important;font-weight:900!important;line-height:1.4!important;}
+@media(max-width:600px){.weather-range{font-size:18px!important;}}
 </style></head>
 <body>
 <header><h1>🏡 Johnson Family Hub</h1></header>
@@ -221,6 +221,7 @@ function changeChoreDay(delta){var d=new Date(selectedChoreDate.getFullYear(),se
 function updateChoreDayNavigation(){var age=choreDateOffset(),label=selectedChoreDate.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});['kieran','evie'].forEach(function(child){var panel=document.getElementById(child+'-panel');panel.querySelector('[data-day-label]').textContent=label+(age===0?' · Today':age===1?' · Yesterday':'');panel.querySelector('[data-day-back]').disabled=age>=30;panel.querySelector('[data-day-forward]').disabled=age<=0;panel.querySelector('[data-day-note]').textContent=choreDateEditable()?'You can submit chores from this day for parent approval.':'View only · Chores older than 3 days cannot be submitted.';});}
 ['kieran','evie'].forEach(function(child){var panel=document.getElementById(child+'-panel');panel.querySelector('[data-day-back]').onclick=function(){changeChoreDay(-1);};panel.querySelector('[data-day-forward]').onclick=function(){changeChoreDay(1);};});
 window.hubChoreDateEditable=choreDateEditable;
+window.hubSelectedChoreDateKey=function(){return choreDateString(selectedChoreDate);};
 document.getElementById('today').textContent=days[day]+', '+now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 window.hubControls=[];window.hubRequestStatus={};window.hubCanSubmit=false;
 var all=[0,1,2,3,4,5,6],weekdays=[1,2,3,4,5];
@@ -400,7 +401,9 @@ function subscribeConfig(parent){
    });
    configRef.update({tasks:upgraded}).catch(function(e){managerStatus.textContent='Could not upgrade bedtime routines: '+e.message;});
   }
-  scheduleTasks=tasks.map(copyTask);
+  // Keep custom saved chores; supplement missing weekend routines from current defaults.
+  var missingWeekend=window.hubDefaults.filter(function(t){return (t.id==='k-weekend'||t.id==='e-weekend')&&!tasks.some(function(x){return x.id===t.id&&x.child===t.child;});});
+  scheduleTasks=tasks.map(copyTask).concat(missingWeekend.map(copyTask));
   window.hubRender(scheduleTasks);
   refreshControls();
   if(parent){updateManager();managerStatus.textContent=doc.exists?'Schedules synced.':'Showing default schedules. Save an edit to start syncing custom schedules.';}
@@ -430,7 +433,7 @@ function refreshControls(){window.hubControls.forEach(function(c){var st=window.
 window.hubRefreshControls=refreshControls;
  window.hubSubmit=function(id,child,taskId,button){
  if(!window.hubCanSubmit){hubDebugLog('write','Submission blocked: device not authorized in page.');return;}
- if(!window.hubChoreDateEditable() || id.split('_')[1]!==choreDateString(selectedChoreDate)){alert('Only today and the previous 3 days can be submitted.');return;}
+ if(!window.hubChoreDateEditable() || id.split('_')[1]!==window.hubSelectedChoreDateKey()){alert('Only today and the previous 3 days can be submitted.');return;}
  button.disabled=true;button.textContent='Submitting…';
  var ref=requests.doc(id),data={child:child,taskId:taskId,date:id.split('_')[1],submittedAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'};
  hubDebugLog('write','Checking existing request: '+id);
@@ -635,10 +638,10 @@ auth.onAuthStateChanged(function(user){
    var now=labels[c.weather_code]||['🌤️','Weather'];var tomorrow=labels[d.weather_code&&d.weather_code[1]]||['🌤️','Weather'];
    byId('weather-icon').textContent=now[0];byId('weather-temp').textContent=Math.round(c.temperature_2m)+'°';byId('weather-description').textContent=now[1];
    byId('weather-range').textContent='High '+Math.round(d.temperature_2m_max[0])+'° · Low '+Math.round(d.temperature_2m_min[0])+'°';
-   byId('weather-clothes').textContent=clothing(d.temperature_2m_min[0],d.temperature_2m_max[0],d.weather_code&&d.weather_code[0]);
+   byId('weather-clothes').textContent='';
    byId('tomorrow-icon').textContent=tomorrow[0];byId('tomorrow-temp').textContent=Math.round(d.temperature_2m_max[1])+'°';byId('tomorrow-description').textContent=tomorrow[1];
-   byId('tomorrow-range').textContent='Low '+Math.round(d.temperature_2m_min[1])+'°';
-   byId('tomorrow-clothes').textContent=clothing(d.temperature_2m_min[1],d.temperature_2m_max[1],d.weather_code&&d.weather_code[1]);
+   byId('tomorrow-range').textContent='High '+Math.round(d.temperature_2m_max[1])+'° · Low '+Math.round(d.temperature_2m_min[1])+'°';
+   byId('tomorrow-clothes').textContent='';
   }catch(e){fail();}
  };
  request.onerror=request.ontimeout=fail;
